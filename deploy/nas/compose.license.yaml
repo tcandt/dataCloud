@@ -1,0 +1,8 @@
+# Optional self-host capacity activation; public verifier only, never a signing key.
+services:
+  app:
+    environment:
+      DATACLOUD_EDITION: selfhost
+      INSTALLATION_PUBLIC_KEY_FILE: /run/license/vendor-public.pem
+    volumes:
+      - ./license/vendor-public.pem:/run/license/vendor-public.pem:ro

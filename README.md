@@ -1,5 +1,8 @@
 # DataCloud
 
+> Version 0.1.7 is available as public Docker images and a deployment bundle. See VERIFICATION.md for tested scope and remaining activation steps.
+
+
 
 
 [English](README.md) | [Tiếng Việt](README.vi.md)
@@ -32,7 +35,7 @@ or the upstream DocumentDB project.
 
 ### Connectors in This Preview
 
-| Connector / component | Status in 0.1.6 |
+| Connector / component | Status in 0.1.7 |
 | --- | --- |
 | MongoDB adapter | Implemented; local MongoDB 4.4.29 TLS and synthetic CRUD verified |
 | DocumentDB adapter | Uses the MongoDB-compatible gateway; live upstream endpoint verification pending |
@@ -46,16 +49,12 @@ describes the intended workflow, not equivalent connector coverage or features.
 
 ## Version
 
-Current preview: **0.1.6**. This release adds platform customer/subscription
-administration, background expiry, opt-in renewal reminders and Atlas/CSP fixes.
-See the [customer guide](docs/operations/CUSTOMER-SUBSCRIPTIONS.md). See the current [verification](VERIFICATION.md)
-for image and deployment status. NAS AMD64, fresh Google login, read-only MongoDB
-and a SePay Test Mode round-trip passed on 0.1.4. SMTP evidence remains from 0.1.3. Each published release has a Git tag, a versioned image,
-release notes and a [changelog](CHANGELOG.md). See [version.json](version.json).
+Current preview: **0.1.7**. Inline payment QR and verified webhook updates, monthly Free quotas, signed offline installation licenses, encrypted scheduled platform backups with isolated restore verification, and responsive query insights. Self-hosted installations have no checkout. See the [release notes](RELEASE-NOTES.md), [verification](VERIFICATION.md), [changelog](CHANGELOG.md) and [version manifest](version.json).
 
 ```text
-ghcr.io/tcandt/datacloud:0.1.6
-ghcr.io/tcandt/datacloud-certificates:0.1.6
+ghcr.io/tcandt/datacloud:0.1.7
+ghcr.io/tcandt/datacloud-certificates:0.1.7
+ghcr.io/tcandt/datacloud-backup:0.1.7
 ```
 
 The release targets `linux/amd64` and `linux/arm64` under the same version tag.
@@ -163,7 +162,7 @@ Mobile query options can collapse while preserving projection/sort drafts.
 
 ### Release Downloads
 
-Version 0.1.6 supplies a deployment ZIP, image digests and `SHA256SUMS.txt`.
+Version 0.1.7 supplies a deployment ZIP, image digests and `SHA256SUMS.txt`.
 Application and certificate images are pulled anonymously from GHCR; Docker
 selects AMD64 or ARM64 automatically. This release does not include offline TAR
 archives. Earlier release archives remain tied to their original versions.

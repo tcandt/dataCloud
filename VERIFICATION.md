@@ -1,20 +1,30 @@
-# 0.1.6 verification / Kết quả kiểm tra
+# 0.1.7 release evidence / Kết quả kiểm tra
 
-2026-10-06. Human release/deployment review approved. Docker images published and hosted AMD64 NAS upgraded to 0.1.6.
+2026-10-06. Owner approved release 0.1.7. All three images are public with AMD64/ARM64 manifests; see image-digests.json. NAS activation is separate.
 
-- 276/276 source tests passed; typecheck, web build and compiled runtime passed.
-- API regression covers supported-empty versus unsupported, legacy422 compatibility, anonymous/foreign-resource denial, unknown view validation, sanitized response and preserved403/503/504 failures.
-- QueryObserver regression covers unsupported mount/focus/reconnect suppression, connection isolation, manual recovery, resumed polling and real failure propagation without retries.
-- Local browser using a synthetic tier restriction renders Current operations unavailable in Overview and Operations, with no console errors/warnings. After switching the fixture to supported, manual Refresh displays No current operations returned.
-- Published application and certificate images are anonymously accessible for linux/amd64 and linux/arm64. Runtime checks passed on native AMD64 and emulated ARM64: Google-only enforcement, dynamic SOCKS dependency, compiled egress module and operations capability report. Certificate initialization passed on both architectures. Native ARM64/macOS acceptance is not claimed.
-- Extracted application image privacy scans passed on both architectures. Exact registry digests are recorded in image-digests.json. The application image was built from private release source bf730c9795caece86fbea83453e109b7ac47276d.
-- A fresh pre-upgrade PostgreSQL archive has a readable catalog; this is not a restore drill. After operator DSM authentication, the manual task completed with Normal (0). Docker reports app 0.1.6, PostgreSQL, ingress and Mongo TLS bridge healthy; tunnel started. Public health returned HTTP 200 with live PostgreSQL storage. Served JavaScript matches the published 0.1.6 image. The retained Owner session, Customers page, MongoDB Explorer reads and Operations unavailable state/manual refresh passed without console errors. DSM still shows stale container names in its inventory; direct Compose execution succeeded.
-- The legacy operations endpoint without `view=capability` intentionally retains its 422 unsupported response. The new web console uses the optional capability report. Actual database permission, transport and timeout failures remain errors.
+## Verified release
 
-Tiếng Việt: đạt 276/276 bài kiểm thử và các bước build/runtime. Image công khai có AMD64 và ARM64; đã chạy thử AMD64 trực tiếp, ARM64 giả lập, đăng nhập Google-only, SOCKS, báo cáo capability và tạo chứng chỉ. Đã quét dữ liệu riêng tư trong cả hai image. Chưa xác nhận chạy trực tiếp trên NAS ARM64 hoặc macOS.
+- Typecheck, web build and minified server compilation pass.
+- 304/304 application tests passed. The suite covers tenant authorization, verified payment/webhook replay, bounded long-poll observers and disconnect cleanup, monthly quota races, installation signature/expiry/isolation and public deployment export.
+- QR browser review includes the SePay-documented compact VietQR with a dedicated sandbox VA; a pending test payment shows automatic status observation. Test QR cannot transfer money. Live webhook integration is covered by signed fixtures; no new bank transfer was initiated.
+- Browser review of Billing, QR, query summaries/detail and tenant integrations at narrow and desktop widths. Initial measured viewport widths were 417 and 1600 CSS pixels; final customer-plan/VietQR review also used 1185 and 433 CSS pixels; no page-level horizontal overflow was observed. Narrow widths use query cards and the detail dialog retains all available measurements.
+- Published application image was pulled by immutable architecture digest and passed compiled hosted/selfhost/Free/tenant-privacy/QR dependency smoke on AMD64 and emulated ARM64. Published certificate tools and backup bytecode/source-exclusion checks also passed on both architectures.
+- Backup image ships compiled bytecode only, without private Python source or its build layer. Bytecode is inspectable and is not a secrecy guarantee.
+- Backup companion native AMD64 and emulated ARM64 passed 7 safety tests plus real encrypted dump, isolated restore, offline reverification, tamper rejection, failure preservation and unchanged source data. Recovery-input helper preserves keys/source permissions and atomically rotates private snapshots.
 
-Đã kiểm tra luồng không hỗ trợ và phục hồi bằng fixture cục bộ, không phát sinh thanh toán hoặc thay đổi database khách hàng. Đã sao lưu PostgreSQL trước nâng cấp và đọc được danh mục bản sao lưu; chưa diễn tập khôi phục NAS. Container Manager có mục tunnel cũ không thể thao tác, và dừng dự án thất bại. Sau khi người vận hành xác thực DSM, tác vụ thủ công hoàn tất Normal (0). NAS đã chạy bản 0.1.6; Docker xác nhận ứng dụng, PostgreSQL, ingress và cầu MongoDB khỏe, tunnel đã khởi động. Website trả HTTP 200 và dùng đúng tệp giao diện của image 0.1.6. Phiên quản trị, trang Customers, đọc MongoDB Explorer và trạng thái Operations không khả dụng/làm mới đều được kiểm tra. DSM vẫn hiển thị tên container cũ trong danh sách quản trị. Endpoint cũ vẫn giữ HTTP 422 khi lệnh không hỗ trợ; giao diện mới dùng `view=capability`.
+- GitHub Linux CI passed all 304 application tests, compiled runtime checks, encrypted backup/restore drill, TypeScript, dependency audit and secret-pattern gate. CI fixture synchronization and Linux fixture permissions were corrected in test-only commits after the immutable image source tag; application and backup runtime sources are unchanged.
+- Customers can select/renew approved plans on Billing. Synthetic providers/payments and internal legal monitoring are blocked at the API and UI for ordinary customers. Live SePay checkout still requires separate live merchant configuration; Test Mode never activates paid access.
 
-Payment remains a synthetic test integration. This patch does not activate live billing or renewal email delivery. Broader roadmap work is not declared complete.
+- Private-identifier scan passed for 80 files extracted from published image archives and the 37-file allowlisted deployment export. No application source directories, generated settings or operator credentials are included in the public repository.
 
-Post-deployment limits / Giới hạn sau triển khai: the affected Atlas connection belongs to a different organization and was not retested under its customer session. A separate read-only runtime probe would require another DSM password confirmation and was not run. No fresh Google OAuth roundtrip or payment-ledger recount was performed in this upgrade; existing authenticated access was verified. The maintenance task remains disabled for automatic execution. Original release tags, images, ZIP and checksums are immutable; this document adds later deployment evidence.
+## Still requires activation or external evidence
+
+- Human release review required by AGENTS.md is satisfied by the owner’s release instruction. The image publishing workflow succeeded and anonymous manifests were verified for all three images and both architectures. Prior immutable 0.1.6 records are retained under history/0.1.6/.
+- Hosted NAS remains on its previously verified release. Backup must be enabled there with a private key, recovery-input snapshot, resource capacity and a verified first run. Store recovery key and encrypted copies off the NAS.
+- Google Cloud currently has Testing audience and incomplete Branding. Application onboarding is immediate for valid Google identities; external-audience publication must be completed in Google Cloud. User policies remain DRAFT_AI as deferred.
+- No claim of new native ARM64 hardware, macOS hardware, Windows containers, customer-database backup or additional database engines. Docker uses Linux containers on supported AMD64/ARM64 hosts, including Docker Desktop.
+- Offline licenses cannot provide instant remote revocation or reliable real-time deployment usage. No telemetry is sent. Vendor issuance receipt is not proof the customer activated or is currently using it.
+
+## Tiếng Việt
+
+Đã kiểm tra mã nguồn, QR, phân quyền khách, hạn mức đồng thời, giấy phép và bản sao lưu/khôi phục cô lập. Đã phát hành image 0.1.7 cho AMD64/ARM64 và xác minh tải không cần đăng nhập; chưa cập nhật NAS. Google vẫn cần hoàn tất Branding và mở audience; không thể bỏ qua giới hạn này bằng giao diện DataCloud. Backup chỉ sao lưu dữ liệu nội bộ/cấu hình DataCloud. Khôi phục thử không thay database đang chạy; kiểm tra khôi phục toàn bộ ứng dụng trên NAS vẫn cần một buổi diễn tập riêng.

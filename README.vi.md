@@ -1,5 +1,8 @@
 # DataCloud
 
+> Đã phát hành 0.1.7 với image Docker công khai và bộ cài. Xem VERIFICATION.md về phạm vi đã kiểm tra và các bước kích hoạt còn lại.
+
+
 
 
 [English](README.md) | [Tiếng Việt](README.vi.md)
@@ -32,11 +35,9 @@ database được mã hóa trong kho bí mật phía máy chủ, không trả v�
 DataCloud là lớp quản lý, không phải database engine mới hay bản fork của
 MongoDB hoặc dự án DocumentDB upstream.
 
-## Phạm vi bản 0.1.6
+## Phạm vi bản 0.1.7
 
-Bản preview 0.1.6 sửa lỗi HTTP khi Atlas không hỗ trợ theo dõi operations, dừng tự thử lại và cho phép làm mới thủ công. Giữ các tính năng quản trị khách hàng/gói và xử lý hết hạn đã có. Xem [hướng dẫn quản trị](docs/operations/CUSTOMER-SUBSCRIPTIONS.md). Xem [kết quả kiểm tra](VERIFICATION.md) về image và triển khai.
-NAS AMD64, đăng nhập Google mới, MongoDB chỉ đọc và SePay Test Mode thực tế đã
-đạt ở 0.1.4. Bằng chứng SMTP vẫn thuộc bản 0.1.3.
+Bản preview **0.1.7** bổ sung QR thanh toán và cập nhật qua webhook đã xác minh, hạn mức Free theo tháng, giấy phép Docker offline có chữ ký, sao lưu nền tảng mã hóa và tự khôi phục thử cô lập, cùng giao diện truy vấn gọn hơn. Docker tự cài không có checkout. Xem [ghi chú phiên bản](RELEASE-NOTES.md), [kết quả kiểm tra](VERIFICATION.md) và [hướng dẫn quản trị](docs/operations/CUSTOMER-SUBSCRIPTIONS.md).
 
 | Thành phần | Trạng thái |
 | --- | --- |
@@ -51,7 +52,7 @@ Chức năng chưa hỗ trợ được hiển thị là không khả dụng.
 
 ## Docker trên nhiều hệ thống
 
-Hai image cùng phiên bản hỗ trợ `linux/amd64` và `linux/arm64`. Docker tự chọn
+Ba image cùng phiên bản hỗ trợ `linux/amd64` và `linux/arm64`. Docker tự chọn
 kiến trúc phù hợp. Dùng Linux containers trên Docker Desktop Windows, Docker
 Engine trên Linux/Ubuntu/NAS hoặc Docker Desktop trên macOS Intel/Apple Silicon.
 Yêu cầu Compose v2, ổ lưu trữ bền vững và ít nhất 4 GB RAM khả dụng cho cả stack.
@@ -195,10 +196,10 @@ trong Cloudflare. Truy cập origin đã cấu hình với đường dẫn `/log
 
 Đọc [CHANGELOG](CHANGELOG.md) và ghi chú phiên bản. Sao lưu dữ liệu MongoDB,
 PostgreSQL, secrets và volume chứng chỉ. Tải bộ cài mới, giữ `.env`, secrets,
-khóa vault và các volume hiện tại, đặt `APP_TAG=0.1.6`, rồi chạy script khởi động.
+khóa vault và các volume hiện tại, đặt `APP_TAG=0.1.7`, rồi chạy script khởi động.
 Không chạy `docker compose down -v` vì lệnh đó xóa volume dữ liệu.
 
-Bản 0.1.6 cung cấp ZIP triển khai, digest image và `SHA256SUMS.txt`.
+Bản 0.1.7 cung cấp ZIP triển khai, digest image và `SHA256SUMS.txt`.
 Docker tải image công khai từ GHCR và tự chọn AMD64/ARM64, không cần đăng nhập.
 Bản này không đính kèm TAR ngoại tuyến; archive của bản trước chỉ dùng cho đúng
 phiên bản đó.

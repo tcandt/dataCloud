@@ -1,14 +1,15 @@
 {
   "product": "DataCloud",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "date": "2026-10-06",
-  "applicationImage": "ghcr.io/tcandt/datacloud:0.1.6",
-  "certificatesImage": "ghcr.io/tcandt/datacloud-certificates:0.1.6",
+  "applicationImage": "ghcr.io/tcandt/datacloud:0.1.7",
+  "certificatesImage": "ghcr.io/tcandt/datacloud-certificates:0.1.7",
   "platforms": [
     "linux/amd64",
     "linux/arm64"
   ],
   "sourceVisibility": "private",
   "applicationLicense": "LicenseRef-DataCloud-Proprietary",
-  "deploymentLicense": "MIT"
+  "deploymentLicense": "MIT",
+  "backupImage": "ghcr.io/tcandt/datacloud-backup:0.1.7"
 }

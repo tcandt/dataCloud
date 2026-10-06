@@ -1,15 +1,27 @@
-# DataCloud 0.1.6
+# DataCloud 0.1.7 — Free-first Docker preview
 
 ## Tiếng Việt
 
-Khi MongoDB Atlas không cho phép currentOp trên gói hiện tại, bản 0.1.5 đã phân loại thành không hỗ trợ nhưng vẫn trả HTTP422 cho giao diện. Bản này thêm chế độ quan sát capability cho API và giao diện: trả trạng thái không hỗ trợ rõ ràng, không tạo yêu cầu HTTP lỗi cho tình huống dự kiến đó; dừng tự gọi lại khi mở trang, quay lại cửa sổ hoặc kết nối lại. Nút Refresh observations vẫn kiểm tra lại để phục hồi khi quyền/gói database thay đổi.
+- QR VietQR theo tài liệu SePay, mẫu compact và VA riêng cho Test Mode; trạng thái thanh toán theo webhook đã xác minh, tự cập nhật và đọc lại khi kết nối gián đoạn. Thông báo xác nhận thanh toán tách biệt với việc kích hoạt gói. QR thử nghiệm không dùng để chuyển tiền.
+- Khách chọn/mua hoặc gia hạn gói từ thẻ gói trên Billing; không có sandbox hay Legal center nội bộ. Khách chỉ thấy kết nối database trong Integrations; SePay/SMTP dành cho chủ nền tảng. Checkout tùy chọn nằm trong Billing của bản hosted; Docker tự cài không có checkout.
+- Free mặc định: 3 dự án, 3 kết nối, 5 thành viên. Bổ sung 1.000 lần Aggregate/Explain và 10.000 request API-key mỗi tháng; không tính việc tự làm mới trình duyệt. Các gói đã được admin sửa được giữ nguyên.
+- Giấy phép Docker có chữ ký Ed25519, mã cài đặt riêng, giới hạn và hạn dùng; không gửi telemetry hay nội dung database. Free dùng offline. Chủ nền tảng ký giấy phép ngoài máy khách và lưu biên nhận cấp phép.
+- Container sao lưu mã hóa mỗi ngày, giữ 14 bản đã kiểm tra; tự khôi phục thử vào PostgreSQL cô lập. Bao gồm dữ liệu nội bộ và cấu hình/khóa khôi phục DataCloud, không bao gồm database bên ngoài của khách.
+- Query insights thu gọn, có thẻ trên điện thoại và chi tiết riêng. Metrics một mẫu hiển thị snapshot; số RAM không được nhà cung cấp hỗ trợ hiển thị không có dữ liệu.
 
-Không che lỗi xác thực, timeout hoặc mất kết nối; không coi việc không được hỗ trợ là không có operation đang chạy. Endpoint cũ không truyền view vẫn giữ phản hồi tương thích, bao gồm 422 khi client yêu cầu lệnh không được hỗ trợ.
+**Đã được chủ nền tảng duyệt phát hành; xem VERIFICATION.md về image và triển khai.** Google bên ngoài cần hoàn tất Branding và chuyển OAuth khỏi Testing. Pháp lý vẫn DRAFT_AI; SePay vẫn Test Mode. Khôi phục thử tự động không ghi đè hệ thống đang chạy.
 
-Chủ nền tảng đã duyệt phát hành và triển khai bản này. Image Docker đã xuất bản; NAS đã nâng cấp 0.1.6 và tác vụ hoàn tất Normal (0). Xem VERIFICATION.md để biết kết quả kiểm tra. Bản vá không thay đổi gói khách hàng hoặc kích hoạt thanh toán thật.
+Nâng cấp hosted: giữ `DATACLOUD_EDITION=hosted`. Bộ cài mới ghi `selfhost`; biến `DEPLOYMENT_MODE=local|external` vẫn chỉ lựa chọn có cài database đi kèm hay không. Backup cần chuẩn bị khóa và snapshot riêng, sau đó bật overlay; lưu thêm bản sao khóa ngoài NAS.
 
 ## English
 
-Atlas tier restrictions were classified correctly in 0.1.5 but still surfaced as HTTP422 in the web console. This update adds an opt-in operations capability report and uses it in the console. Unsupported observations render an explicit state and stop automatic polling, mount, focus and reconnect fetches. Manual refresh rechecks support and permits recovery after a database permission/tier change.
+- SePay-documented VietQR images with the compact template and dedicated Test Mode VA; verified-webhook status observation with reconnect catchup. Payment confirmation and subscription fulfillment are distinct. Synthetic QR codes cannot transfer money.
+- Customers choose or renew approved plans directly from plan cards. Sandbox APIs/UI and internal Legal center are platform-admin only. Tenant integrations show database connections; SMTP/payment configuration is platform-admin only. Hosted checkout remains optional in Billing; self-hosted Docker has no checkout.
+- Free defaults: 3 projects, 3 connections, 5 members, 1,000 aggregation/explain attempts and 10,000 API-key requests per UTC month. Browser refreshes do not consume API quota. Saved administrator catalogs are preserved.
+- Offline Ed25519 installation licenses bind limits and expiry to an installation ID. No hidden telemetry or database-data upload. Vendor signing and issuance receipts remain private; offline revocation/anti-cloning limits are documented.
+- Daily encrypted platform backup, 14 verified artifacts, and automatic isolated PostgreSQL restore drills. Includes platform metadata and recovery configuration; external customer databases are outside this scope.
+- Compact query summaries, mobile cards, full detail dialog, honest single-sample metrics and unavailable memory states.
 
-Authentication, transport and timeout failures remain errors. An unavailable observation is never presented as a supported empty operations list. The legacy API without a view retains its original array response and unsupported422 contract. Source/API/UI checks are recorded in VERIFICATION.md. Human release/deployment review approved. Docker images are published and the hosted AMD64 NAS is running 0.1.6; the maintenance task completed with Normal (0).
+**Publication approved by the owner; see VERIFICATION.md for image and deployment evidence.** External Google access needs completed Branding and audience publication. Legal documents remain DRAFT_AI; SePay stays in Test Mode. Automated restore drills never replace the live database.
+
+Hosted upgrades must retain `DATACLOUD_EDITION=hosted`; new installers select `selfhost`. The separate `DEPLOYMENT_MODE=local|external` option still selects the optional starter database. Backups require private key/input preparation and the backup overlay, with an off-NAS recovery-key copy.

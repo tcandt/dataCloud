@@ -24,6 +24,7 @@ Save the following private JSON as `deploy/nas/secrets/payments_config` and add
       "enableTest": true,
       "bank": "Vietcombank",
       "accountNumber": "YOUR_FAKE_BANK_ACCOUNT",
+      "virtualAccountNumber": "YOUR_SBSEPAY_TEST_VA",
       "webhookSecret": "YOUR_UNIQUE_TEST_HMAC_SECRET"
     }
   },
@@ -42,7 +43,7 @@ Choose **SePay Test Mode**, create a test checkout and copy its exact amount and
 reference into SePay's transaction simulator for your dedicated fake bank account.
 Successful authenticated delivery changes only the synthetic ledger to PAID.
 It does not activate paid access, create a real invoice or send a payment receipt.
-No real bank QR is displayed for Test Mode. Replaying the same event is idempotent.
+The platform administrator sees a SePay VietQR image using the fake VA, exact amount/reference and compact template. It is for the SePay simulator, not a real transfer. Without a configured sandbox VA, only local test instructions are shown. Customers cannot list, create or inspect sandbox payments. Replaying the same event is idempotent.
 Check webhook delivery logs plus DataCloud's payment state before claiming a test passed.
 
 Live configuration uses a separate `sepay` entry and callback ending `/sepay`.
@@ -66,7 +67,7 @@ giữ giá và phiên bản catalog ban đầu, kể cả khi admin thay đổi 
 
 Tạo checkout bằng SePay Test Mode, rồi mô phỏng đúng số tiền và nội dung trên SePay.
 Kết quả xác thực chỉ ghi nhận thanh toán giả; không nâng gói, tạo hóa đơn thật hoặc
-gửi email biên nhận. Không hiển thị QR chuyển tiền thật. Gửi lại cùng sự kiện không
+gửi email biên nhận. Quản trị viên xem ảnh VietQR dùng VA giả lập, số tiền và nội dung chính xác với mẫu compact; dùng trình mô phỏng SePay, không chuyển tiền thật. Khách không thấy và không gọi được API sandbox. Gửi lại cùng sự kiện không
 ghi nhận thêm tiền. Khóa HMAC thử nghiệm phải khác khóa thật; không cần API Access
 token cho luồng nhận webhook này. Chỉ kết luận đạt sau khi kiểm tra log và trạng thái.
 
@@ -74,3 +75,6 @@ Official references / Tài liệu chính thức:
 - [SePay Test Mode](https://developer.sepay.vn/vi/tien-ich-khac/test-mode)
 - [Test webhook configuration](https://developer.sepay.vn/vi/tien-ich-khac/test-mode/tao-webhook)
 - [HMAC verification](https://developer.sepay.vn/vi/sepay-webhooks/xac-thuc)
+
+- [VietQR Test Mode](https://developer.sepay.vn/vi/tien-ich-khac/test-mode/mo-phong-tao-ma-vietqr)
+- [VietQR image parameters](https://developer.sepay.vn/vi/tien-ich-khac/tao-qr-code)

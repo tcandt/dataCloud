@@ -20,7 +20,7 @@ services:
       - mongo_tls:/mongo
       - public_ca:/public-ca
       - ingress_tls:/ingress
-    image: ghcr.io/tcandt/datacloud-certificates:${APP_TAG:-0.1.6}
+    image: ghcr.io/tcandt/datacloud-certificates:${APP_TAG:-0.1.7}
   postgres:
     image: postgres:17-bookworm
     restart: unless-stopped
@@ -64,7 +64,7 @@ services:
       retries: 12
       start_period: 30s
   app:
-    image: ghcr.io/tcandt/datacloud:${APP_TAG:-0.1.6}
+    image: ghcr.io/tcandt/datacloud:${APP_TAG:-0.1.7}
     user: 1000:1000
     read_only: true
     init: true
@@ -81,6 +81,7 @@ services:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: "4317"
+      DATACLOUD_EDITION: ${DATACLOUD_EDITION:-hosted}
       DEMO_MODE: "false"
       PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:?Set the exact HTTPS website origin}
       DATABASE_URL_FILE: /run/secrets/database_url

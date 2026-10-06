@@ -5,6 +5,11 @@
 Every published version has a matching Git tag, release notes and Docker tags.
 Version format: MAJOR.MINOR.PATCH. Preview versions may require migration review.
 
+## 0.1.7 — 2026-10-06
+
+- English: inline QR/webhook updates, tenant-only integrations, monthly quotas, offline signed installation licenses, encrypted automated backup/restore verification, responsive insights and snapshot metrics. See RELEASE-NOTES.md for scope and deployment gates.
+- Tiếng Việt: QR/cập nhật webhook, ẩn cấu hình vận hành khỏi khách, hạn mức tháng, license Docker, backup mã hóa và thử khôi phục, giao diện truy vấn/metrics rõ ràng. Chủ nền tảng đã duyệt phát hành; xem VERIFICATION.md về image và triển khai.
+
 ## 0.1.6 — 2026-10-06
 
 - English: capability-aware operations observations render unsupported without HTTP errors, stop automatic refetches and support manual recovery. Preserve real failures and legacy API behavior.
