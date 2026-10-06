@@ -5,6 +5,58 @@
 Every published version has a matching Git tag, release notes and Docker tags.
 Version format: MAJOR.MINOR.PATCH. Preview versions may require migration review.
 
+## 0.1.4 - 2026-10-06
+
+### English
+
+- Added MongoDB SRV/TXT discovery, multi-host seed lists and replica-set discovery.
+  Each driver connection passes through a guarded destination proxy; resolved
+  peers must satisfy the host allowlist, IP policy and verified TLS requirements.
+  Local Docker MongoDB 4.4 TLS seed-list and SRV/TXT checks passed. A real MongoDB
+  Atlas account has not been tested; additional database engines are not implied.
+- Rebalanced console spacing, cards, dialogs and aggregation columns. Removed
+  nested per-document JSON scrolling. Local browser checks found no page-level
+  overflow across 20 routes at actual widths of 1600 and 417 CSS pixels; other
+  widths and final-image review are still pending.
+- Added persistent global plan administration for the deployment bootstrap Owner.
+  Free includes three connections; suggested monthly prices are 29,000 VND for
+  Pro and 79,000 VND for Team. Paid plans remain disabled until the administrator
+  approves them. Ordinary tenant Owners cannot change global prices.
+- Plan edits use revision checks and atomic audit. Restart preserves edited
+  prices and quotas. Checkout snapshots retain their approved price when a plan
+  later changes or is disabled; reduced quotas preserve existing resources.
+- Added a separate SePay Test Mode provider with distinct webhook credentials,
+  synthetic ledger entries and test settlement events. Test payments cannot grant
+  paid subscriptions, invoices or billing receipt emails. Local signed-webhook
+  tests passed; real provider webhook configuration and end-to-end UAT are pending.
+- Metadata adds catalog state/history and checkout catalog revisions. Follow the
+  migration and rollback notes in [release notes](RELEASE-NOTES.md). AMD64/ARM64 image manifests and runtime checks passed; NAS upgrade remains pending.
+
+### Tiếng Việt
+
+- Thêm kết nối MongoDB SRV/TXT, danh sách nhiều máy chủ và khám phá replica set.
+  Mỗi kết nối của driver được kiểm tra đích đến, tên máy chủ cho phép, chính sách
+  IP và TLS hợp lệ. Đã thử thành công seed list và SRV/TXT với MongoDB 4.4 TLS
+  trong Docker cục bộ. Chưa thử tài khoản Atlas thật; thay đổi này không bổ sung
+  connector cho các engine database khác.
+- Cân đối lại khoảng cách, thẻ, hộp thoại và hai cột aggregation; bỏ cuộn JSON
+  riêng lồng trong từng document. Kiểm tra 20 trang ở chiều rộng thực tế 1600 và
+  417 CSS pixel không thấy tràn ngang toàn trang; các kích thước khác và image
+  cuối vẫn đang chờ kiểm tra.
+- Thêm quản trị danh mục gói toàn hệ thống, chỉ dành cho Owner được khởi tạo khi
+  triển khai. Free có ba kết nối; đề xuất Pro 29.000đ/tháng, Team 79.000đ/tháng.
+  Gói trả phí mặc định tắt cho đến khi quản trị viên duyệt. Owner của workspace
+  thông thường không được sửa giá chung.
+- Lưu thay đổi gói với revision và audit trong cùng giao dịch; khởi động lại giữ
+  cấu hình đã sửa. Checkout cũ giữ giá được duyệt lúc tạo dù gói đổi giá hoặc bị
+  tắt. Giảm hạn mức không xóa tài nguyên hiện có.
+- Tách riêng nhà cung cấp SePay Test Mode, khóa webhook, sổ giao dịch giả lập và
+  sự kiện thử nghiệm. Thanh toán thử không cấp gói trả phí, invoice hay email
+  biên nhận thật. Kiểm tra webhook ký cục bộ đã đạt; cấu hình webhook thật trên
+  SePay và kiểm thử xuyên suốt với nhà cung cấp vẫn đang chờ.
+- Metadata thêm trạng thái/lịch sử danh mục và revision trong checkout. Xem
+  [ghi chú nâng/hạ phiên bản](RELEASE-NOTES.md). Đã xác minh manifest và runtime image AMD64/ARM64; triển khai nâng cấp NAS còn chờ.
+
 ## 0.1.3 - 2026-10-06
 
 ### English

@@ -19,6 +19,8 @@ jobs:
           docker compose -f deploy/nas/compose.external.yaml -f deploy/nas/compose.integrations.yaml -f deploy/nas/compose.synology.yaml --profile tunnel config --quiet
           docker compose -f deploy/nas/compose.external.yaml -f deploy/nas/compose.integrations.yaml config --format json | jq -e '.services.app.environment.SMTP_FROM == null'
           SMTP_FROM=notifications@example.invalid docker compose -f deploy/nas/compose.external.yaml -f deploy/nas/compose.integrations.yaml config --format json | jq -e '.services.app.environment.SMTP_FROM == "notifications@example.invalid"'
+          node --input-type=module -e 'import fs from "node:fs"; fs.writeFileSync("deploy/nas/secrets/payments_config", "{}\n");'
+          docker compose -f deploy/nas/compose.external.yaml -f deploy/nas/compose.integrations.yaml -f deploy/nas/compose.synology.yaml -f deploy/nas/compose.payments.yaml --profile tunnel config --quiet
           test ! -d apps
           test ! -d services
           test ! -f package-lock.json

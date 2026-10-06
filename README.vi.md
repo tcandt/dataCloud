@@ -30,12 +30,11 @@ database được mã hóa trong kho bí mật phía máy chủ, không trả v�
 DataCloud là lớp quản lý, không phải database engine mới hay bản fork của
 MongoDB hoặc dự án DocumentDB upstream.
 
-## Phạm vi bản 0.1.3
+## Phạm vi bản 0.1.4
 
-Bản preview 0.1.3 đã có image công khai và đã chạy HTTPS trên NAS Synology AMD64.
-Đã kiểm tra callback/phiên/đăng xuất Google và thư SMTP gửi từ NAS đã đến Gmail.
-Chưa xác minh mọi luồng thông báo. Xem
-[kết quả kiểm tra](VERIFICATION.md) trước khi triển khai.
+Bản preview 0.1.4 bổ sung kết nối SRV/replica set, sửa gói từ admin và SePay
+Test Mode độc lập. Xem [kết quả kiểm tra](VERIFICATION.md) về image và triển khai.
+Bằng chứng NAS/Google/SMTP trước đó thuộc phiên bản 0.1.3.
 
 | Thành phần | Trạng thái |
 | --- | --- |
@@ -57,7 +56,7 @@ Yêu cầu Compose v2, ổ lưu trữ bền vững và ít nhất 4 GB RAM khả
 Chưa hỗ trợ ARM32 hoặc Windows containers nguyên bản.
 
 Đã kiểm tra Docker Desktop AMD64 và chạy ARM64 bằng giả lập. Chưa kiểm tra trên
-phần cứng NAS, macOS hoặc Ubuntu riêng. Xem [bằng chứng kiểm tra](VERIFICATION.md).
+NAS cho bản 0.1.4, phần cứng macOS hoặc Ubuntu riêng; NAS Synology AMD64 đã được kiểm tra ở bản 0.1.3. Xem [bằng chứng kiểm tra](VERIFICATION.md).
 
 ## Cài đặt
 
@@ -156,11 +155,19 @@ Nếu dùng CA riêng, mở **Private certificate authority** trong hộp thoạ
 và dán chứng chỉ CA dạng PEM. Chứng chỉ được mã hóa cùng URI và không trả về qua
 API đọc. Khi đổi thông tin xác thực, mặc định giữ CA; bạn có thể chọn thay CA
 hoặc dùng kho tin cậy hệ thống. Endpoint chưa có TLS cần bật TLS trước khi kết nối.
-Trong mục Connections trên website, nhập URI riêng có xác thực,
-`tls=true` và `directConnection=true`. Dùng tài khoản database với quyền tối
-thiểu. Bản này chấp nhận một seed trực tiếp và xác thực default/SCRAM;
-chưa hỗ trợ SRV, nhiều seed hoặc tự khám phá topology. Kiểm tra endpoint thật
-trước khi sử dụng cho công việc thực tế.
+Nhập URI riêng trong Connections. Hỗ trợ mongodb:// trực tiếp, nhiều seed của
+replica set và mongodb+srv://. SRV tự bật TLS; URI thường cần tls=true. Chỉ dùng
+directConnection=true cho endpoint đơn. Mọi seed và máy chủ tự khám phá cần nằm
+trong danh sách hostname được phép; địa chỉ riêng cần bật chính sách mạng riêng.
+Chỉ cho phép hậu tố DNS của cluster cần dùng. Hỗ trợ xác thực default/SCRAM;
+chưa hỗ trợ load-balanced routing hoặc cơ chế xác thực khác. Cần credential thật
+để kiểm tra chính cluster Atlas của bạn. Dùng tài khoản database tối thiểu quyền.
+
+Với SRV, thêm hậu tố DNS riêng của cluster vào `.env` riêng, ví dụ
+`DATABASE_ALLOWED_HOSTS=*.cluster.example.invalid`; giữ các host đã duyệt khác.
+Form cài đặt hiện nhận hostname/IP cụ thể, nên thêm wildcard trực tiếp vào file
+sau cài đặt rồi khởi động lại ứng dụng. Không cho phép toàn bộ miền Atlas.
+
 
 Để chuyển hệ thống hiện có sang chế độ external, sao lưu cấu hình/dữ liệu, đặt
 `COMPOSE_FILE=compose.external.yaml` (giữ thêm `:compose.integrations.yaml` nếu
@@ -186,19 +193,19 @@ trong Cloudflare. Truy cập origin đã cấu hình với đường dẫn `/log
 
 Đọc [CHANGELOG](CHANGELOG.md) và ghi chú phiên bản. Sao lưu dữ liệu MongoDB,
 PostgreSQL, secrets và volume chứng chỉ. Tải bộ cài mới, giữ `.env`, secrets,
-khóa vault và các volume hiện tại, đặt `APP_TAG=0.1.3`, rồi chạy script khởi động.
+khóa vault và các volume hiện tại, đặt `APP_TAG=0.1.4`, rồi chạy script khởi động.
 Không chạy `docker compose down -v` vì lệnh đó xóa volume dữ liệu.
 
-Releases có TAR image riêng cho AMD64/ARM64 và `SHA256SUMS.txt`. Chọn đúng
-kiến trúc, dùng `docker load`, rồi đặt `DATACLOUD_NO_PULL=1` khi chạy script.
-Các image PostgreSQL, MongoDB, nginx và cloudflared tùy chọn vẫn cần có sẵn
-hoặc tải từ registry chính thức. Chi tiết nằm trong tài liệu tiếng Anh.
+Bản 0.1.4 cung cấp ZIP triển khai, digest image và `SHA256SUMS.txt`.
+Docker tải image công khai từ GHCR và tự chọn AMD64/ARM64, không cần đăng nhập.
+Bản này không đính kèm TAR ngoại tuyến; archive của bản trước chỉ dùng cho đúng
+phiên bản đó.
 
 0.1.2 không đổi bảng metadata hay phiên bản engine. Sau khi tạo/thay kết nối,
 bản cũ không đọc được định dạng mã hóa mới; hạ phiên bản cần khôi phục backup
 metadata trước cập nhật cùng khóa vault.
 
-0.1.3 thêm bảng đánh dấu phiên Google. Bật Google-only yêu cầu đăng nhập Google
+0.1.3 đã thêm bảng đánh dấu phiên Google. Bật Google-only yêu cầu đăng nhập Google
 lại; phiên mật khẩu cũ bị từ chối. Không đổi `owner_config.email` để chuyển owner:
 email không khớp khiến bootstrap từ chối khởi động, không tự chuyển quyền. Cần
 quy trình chuyển danh tính được kiểm tra trước. Bản cũ không thực thi chính sách
@@ -208,8 +215,8 @@ phiên đang hoạt động trước khi hạ phiên bản.
 
 Bản 0.1.0 đã được
 thu hồi để gỡ thông tin cấu hình riêng; không thể thu hồi bản đã tải hoặc
-bộ nhớ đệm của bên khác. Chính sách pháp lý vẫn là bản nháp. Kiểm tra NAS, Google
-và SMTP thực tế đang tiến hành hoặc chờ cấu hình nhà cung cấp; xem VERIFICATION.md.
+bộ nhớ đệm của bên khác. Chính sách pháp lý vẫn là bản nháp. NAS, Google
+và một thư SMTP đã được kiểm tra ở bản 0.1.3; nâng NAS 0.1.4 còn chờ. Xem VERIFICATION.md.
 Triển khai endpoint thực tế cần cấu hình
 TLS và phạm vi kiểm tra được chủ hệ thống cho phép.
 
@@ -218,3 +225,10 @@ TLS và phạm vi kiểm tra được chủ hệ thống cho phép.
 Bộ cài: [MIT](LICENSE). Ứng dụng: [giấy phép đóng](APPLICATION-LICENSE.txt).
 Phần mềm bên thứ ba giữ giấy phép gốc. Có sử dụng AI đáng kể trong phát triển
 và chuẩn bị phát hành.
+
+## Gói giá thấp và thử nghiệm SePay
+
+Free 0đ với 3 kết nối; Pro 29.000đ và Team 79.000đ/30 ngày là mức giá đề xuất.
+Quản trị nền tảng có thể sửa giá, hạn mức và bật gói. Cấu hình giữ sau khởi động
+lại, giao dịch cũ giữ giá ban đầu. [Hướng dẫn SePay Test Mode](docs/operations/SEPAY-TEST-MODE.md)
+thử giao dịch giả, không nâng gói hoặc tạo hóa đơn thanh toán thật.

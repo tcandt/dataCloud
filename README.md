@@ -30,7 +30,7 @@ or the upstream DocumentDB project.
 
 ### Connectors in This Preview
 
-| Connector / component | Status in 0.1.3 |
+| Connector / component | Status in 0.1.4 |
 | --- | --- |
 | MongoDB adapter | Implemented; local MongoDB 4.4.29 TLS and synthetic CRUD verified |
 | DocumentDB adapter | Uses the MongoDB-compatible gateway; live upstream endpoint verification pending |
@@ -44,15 +44,14 @@ describes the intended workflow, not equivalent connector coverage or features.
 
 ## Version
 
-Current preview: **0.1.3**. Public images and native Synology HTTPS startup are
-verified. Live Google sign-in/session/logout and a NAS SMTP test delivered to the
-operator's Gmail inbox also passed; see
-[verification](VERIFICATION.md). Each published release has a Git tag, a versioned image,
+Current preview: **0.1.4**. This release adds SRV/replica-set connections, editable
+plans and isolated SePay testing. See the current [verification](VERIFICATION.md)
+for image and deployment status. Earlier Google/SMTP/NAS evidence applies to 0.1.3. Each published release has a Git tag, a versioned image,
 release notes and a [changelog](CHANGELOG.md). See [version.json](version.json).
 
 ```text
-ghcr.io/tcandt/datacloud:0.1.3
-ghcr.io/tcandt/datacloud-certificates:0.1.3
+ghcr.io/tcandt/datacloud:0.1.4
+ghcr.io/tcandt/datacloud-certificates:0.1.4
 ```
 
 The release targets `linux/amd64` and `linux/arm64` under the same version tag.
@@ -71,7 +70,7 @@ is required. The runtime includes minified compiled code and third-party notices
 
 The platform targets are image architectures, not claims of testing on every
 host listed. AMD64 Docker Desktop and ARM64 application emulation have been
-tested locally. Native NAS and macOS hardware have not been tested.
+tested locally. Native Synology AMD64 was verified on the preceding release; macOS hardware has not been tested.
 ARM32, native Windows containers and other CPU architectures are not supported
 by this release. Requirements: Docker with Compose v2, persistent storage and
 at least 4 GB available RAM for the full stack.
@@ -158,22 +157,12 @@ The updated light/dark interface adapts navigation, cards and forms to desktop,
 tablet and phone widths. Wide tables and JSON scroll within their own panels.
 Mobile query options can collapse while preserving projection/sort drafts.
 
-### Install From Image Archives
+### Release Downloads
 
-GitHub Releases also supply application and certificate images in TAR archives
-for each CPU architecture. Use the `linux-amd64` archive on Intel/AMD hosts or
-`linux-arm64` on Apple Silicon and ARM64 NAS. Check SHA256SUMS.txt, load the
-matching archive, then use your configured deployment directory:
-
-```sh
-docker load -i datacloud-images-v0.1.3-linux-amd64.tar
-DATACLOUD_NO_PULL=1 sh deploy/nas/start.sh
-```
-
-On PowerShell, set `$env:DATACLOUD_NO_PULL='1'` before running `start.ps1`.
-This skips registry downloads of installed images. PostgreSQL, MongoDB, nginx
-and optional cloudflared still need to be installed from their official registries
-unless already present locally. Archive installation requires no GHCR login.
+Version 0.1.4 supplies a deployment ZIP, image digests and `SHA256SUMS.txt`.
+Application and certificate images are pulled anonymously from GHCR; Docker
+selects AMD64 or ARM64 automatically. This release does not include offline TAR
+archives. Earlier release archives remain tied to their original versions.
 
 ## Website and Tunnel
 
@@ -219,12 +208,18 @@ dialog and paste only the PEM CA certificate bundle. It is encrypted alongside
 the URI and is never returned by read APIs. Credential rotation keeps the current
 CA by default; you can explicitly replace it or select system trust.
 Plaintext database endpoints must enable TLS before DataCloud can connect.
-Enter the URI privately in Connections with authentication, `tls=true` and
-`directConnection=true`. Use a least-privilege database account. This preview
-accepts one direct seed and default/SCRAM authentication; SRV, multiple seeds
-and topology discovery are unavailable. A hostname allowlist does not establish
-network reachability or prove endpoint compatibility. Validate the actual target
-before relying on it for operations.
+Enter a MongoDB URI privately in Connections. Standard mongodb:// direct endpoints,
+multi-seed replica sets, and mongodb+srv:// DNS discovery are supported with
+verified TLS and default/SCRAM authentication. SRV enables TLS automatically;
+standard URIs must use tls=true. Use directConnection=true only for a single direct
+endpoint. Every seed, SRV target and discovered peer must match the operator's
+host allowlist; private addresses require explicit private-network permission.
+For SRV discovery, edit the private `.env` allowlist to include the cluster-specific
+suffix, for example `DATABASE_ALLOWED_HOSTS=*.cluster.example.invalid`. The setup
+prompt currently accepts literal hosts/IPs; add the wildcard in the private file
+after setup. Preserve other approved hosts. Approve only the cluster's narrow DNS suffix. Use a
+least-privilege database account. Load-balanced routing and other auth mechanisms
+are not supported. Actual Atlas credentials/endpoint compatibility require testing.
 
 To select external mode on an existing installation, back up the private
 configuration and data, set `COMPOSE_FILE=compose.external.yaml` (retain
@@ -249,7 +244,7 @@ rotating connections. Old raw-URI records remain readable in 0.1.2. Versions
 0.1.1 and earlier cannot read new envelopes; do not downgrade after these changes
 without restoring the matching pre-upgrade metadata backup and vault keys.
 
-Version 0.1.3 adds a Google session marker table. Switching to Google-only requires
+Version 0.1.3 added a Google session marker table. Switching to Google-only requires
 a fresh Google login; existing password sessions are refused. Do not change
 `owner_config.email` to migrate an existing owner: a mismatch refuses bootstrap
 instead of transferring ownership. Arrange a reviewed account migration before
@@ -258,8 +253,8 @@ rollback requires reviewing authentication settings and restoring a matching
 metadata/secrets backup, not merely changing the image tag. Preserve the current
 backup and end active sessions before a rollback.
 
-Legal content remains draft. Native Synology startup, HTTPS access, live Google
-sign-in/session/logout and one SMTP test from the NAS delivered to Gmail passed.
+Legal content remains draft. The preceding 0.1.3 release passed native Synology startup, HTTPS access, live Google
+sign-in/session/logout and one SMTP test from the NAS delivered to Gmail.
 This does not verify every notification workflow. Current evidence is in VERIFICATION.md.
 Public images contain executable code that can be inspected; private source
 storage and encrypted backups do not make distributed code impossible to recover.
@@ -269,3 +264,11 @@ storage and encrypted backups do not make distributed code impossible to recover
 Deployment files: [MIT](LICENSE). Application: [proprietary](APPLICATION-LICENSE.txt).
 Third-party software retains its original licenses. AI assistance was used
 substantially in implementation and release preparation.
+
+## Affordable plans and SePay sandbox
+
+Free starts with 3 connections at 0 VND. Pro 29,000 VND and Team 79,000 VND per
+30-day period are proposed defaults; the platform Owner can edit and enable them.
+Catalog changes persist across restarts and preserve prior checkout prices.
+[SePay Test Mode setup (English/Vietnamese)](docs/operations/SEPAY-TEST-MODE.md)
+uses isolated virtual transactions and never activates real paid access.

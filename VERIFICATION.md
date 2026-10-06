@@ -1,4 +1,4 @@
-# Release 0.1.3 Verification / Kiểm tra bản phát hành
+# Release 0.1.4 Verification / Kiểm tra bản phát hành
 
 Date / Ngày: 2026-10-06.
 
@@ -7,13 +7,61 @@ Connector availability is documented in [English](README.md) and
 [Vietnamese](README.vi.md). It does not establish compatibility with every engine
 or Docker host.
 
-## 0.1.3 current checks / Kiểm tra hiện tại
+## 0.1.4 release checks / Kiểm tra bản phát hành
+
+Status: **PREVIEW VERIFIED WITH LIMITS**. Executable images use private tag
+`v0.1.4`, revision `d455fd3be134b353b87b4798389a09bfbfe4be0b`.
+The final image workflow and private security CI passed. Public image manifests
+are recorded in [image-digests.json](image-digests.json). Source and private
+operator configuration remain unpublished. NAS upgrade and the SePay provider
+round-trip await action-time browser confirmation.
+
+| Check / Kiểm tra | Current evidence / Bằng chứng hiện có |
+| --- | --- |
+| Unit, integration and security suite | 247 passed locally and in the private image workflow. |
+| TypeScript and application build | Passed on the combined source, including compiled runtime and MongoDB SOCKS loading |
+| Real MongoDB discovery fixture | Docker MongoDB 4.4 with verified TLS: multi-host seed-list and SRV + TXT connection paths passed |
+| Live MongoDB Atlas | Not tested; no real Atlas credentials were supplied |
+| Destination isolation | Local regression coverage checks discovered peers, DNS/IP policy and guarded driver sockets; fixture success is not a compatibility claim for every topology |
+| Catalog authorization and persistence | Local tests passed for bootstrap Owner restriction, tenant Owner/API-key/demo denial, CSRF, revision conflicts, audit rollback, restart persistence and lowered quotas |
+| Checkout price changes | Local integration tests passed for transaction-consistent catalog snapshots and settlement at the approved historical price after later edits or disabling |
+| SePay Test Mode isolation | Local signed-webhook tests passed; test events left paid subscription, invoice and receipt-email state unchanged |
+| Local browser admin and checkout | Administrator plan editing and sandbox checkout intent reviewed through the actual UI |
+| Responsive console | 20 routes reviewed at actual widths of 1600 and 417 CSS pixels; no page-level horizontal overflow found. Other widths and final-image review remain pending. |
+| SePay provider dashboard | Dedicated fake bank account and VA created; DL payment-code pattern configured. Webhook HMAC registration and provider-to-platform delivery await browser action-time confirmation. |
+| Final AMD64/ARM64 images | Anonymous application/certificate manifests verified; actual AMD64 and emulated ARM64 runtime checks passed, including Google-only route enforcement and MongoDB dynamic SOCKS loading. Both certificate initializers passed. Known-private-identifier scans passed for final app filesystems (17,604 AMD64 / 17,603 ARM64 files), both certificate filesystems and 10 registry metadata files; this is not an audit of every historical image layer. |
+| Public deployment files | Explicit allowlist export, known-private-identifier scan and four Compose profile validations passed, including the payments/integrations/Synology overlay |
+| Encrypted source backup | Authenticated local restore matched the original source archive SHA256; key remains private |
+| NAS 0.1.4 deployment | Pending; earlier NAS evidence below applies to 0.1.3 only |
+
+Paid plans remain disabled until the platform administrator explicitly enables
+them. Suggested Pro/Team prices are configuration proposals, not proof of a live
+merchant integration. Test provider ledger entries are synthetic and do not
+grant paid entitlements. Supported database engines remain MongoDB and the
+MongoDB-compatible DocumentDB gateway; SRV support does not add SQL connectors.
+
+Migration adds durable catalog state/history and checkout catalog revision
+snapshots. Existing policy and prices are preserved on startup. See the
+[English/Vietnamese migration and rollback notes](RELEASE-NOTES.md).
+
+Trạng thái: **PREVIEW ĐÃ KIỂM TRA, CÒN GIỚI HẠN**. Bộ kiểm tra cuối đạt 247 bài;
+typecheck, build và compiled runtime đạt. Image công khai AMD64 và ARM64 giả lập
+đạt kiểm tra chạy thực tế, chế độ Google-only và tải SOCKS của driver MongoDB.
+Manifest và digest của cả image ứng dụng lẫn chứng chỉ đã xác minh; khởi tạo chứng chỉ đạt trên cả hai kiến trúc. Quét các thông tin riêng tư đã biết trong filesystem cuối và metadata image đạt.
+MongoDB 4.4 TLS cục bộ đạt seed list và SRV/TXT; chưa có tài khoản Atlas thật.
+Giao diện admin sửa gói và checkout sandbox đã kiểm tra cục bộ. Đã rà 20 trang ở
+1600 và 417 CSS pixel, không thấy tràn ngang toàn trang; chưa xác minh mọi kích thước.
+SePay đã có ngân hàng, VA và mẫu mã thanh toán giả lập riêng; webhook và kiểm thử
+xuyên suốt còn chờ xác nhận thao tác trình duyệt. NAS hiện vẫn chạy 0.1.3.
+Bản sao mã nguồn mã hóa đã thử khôi phục thành công; khóa giữ riêng tư.
+
+## Historical 0.1.3 checks / Kiểm tra bản trước
 
 Status: **PREVIEW VERIFIED WITH LIMITS**. Executable images use private tag
 `v0.1.3`, revision `fc0a5f6eb63fe2843731df746c3eb38e2dcaef81`.
 The final private image workflow passed. Later deployment-only revision
 `4280ac5` adds the Synology overlay and optional SMTP sender fix without changing
-the executable image tag. See [image digests](image-digests.json) and release
+the executable image tag. See [archived 0.1.3 image digests](https://github.com/tcandt/dataCloud/blob/v0.1.3/image-digests.json) and release
 asset checksums. Historical receipts below are not evidence for these images.
 
 | Check / Kiểm tra | Result / Kết quả |

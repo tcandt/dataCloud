@@ -1,0 +1,9 @@
+# Optional SePay Test Mode or live payment configuration. Keep this JSON private.
+services:
+  app:
+    environment:
+      PAYMENTS_CONFIG_FILE: /run/secrets/payments_config
+    secrets:
+      - payments_config
+secrets:
+  payments_config: { file: ./secrets/payments_config }
