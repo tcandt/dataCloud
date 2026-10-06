@@ -5,6 +5,42 @@
 Every published version has a matching Git tag, release notes and Docker tags.
 Version format: MAJOR.MINOR.PATCH. Preview versions may require migration review.
 
+## 0.1.3 - 2026-10-06
+
+### English
+
+- Added deployment-level Google-only browser authentication. Password sign-in,
+  registration, reset/verification and demo routes are disabled in this mode.
+  Verified Google users can create their own isolated workspace. An existing
+  bootstrap owner is linked only by its explicitly configured verified email.
+- Old password sessions cannot authenticate in Google-only mode; scoped API keys
+  remain available for machine integrations. Fixed OAuth callback cookie handling.
+- Added private OAuth/SMTP secret-file configuration and a Docker integrations
+  overlay. New interactive installations default to Google-only; existing
+  installations preserve their chosen mode and secrets.
+- Refreshed light/dark console and public pages, responsive cards/forms/navigation,
+  local scrolling for data tables/JSON, compact mobile query options and 44px tree
+  rows. Draft projection/sort values survive collapsing the mobile panel.
+- Google confirms the signed-in email. SMTP notifications require independently
+  configured provider credentials; being signed into Gmail is not SMTP setup.
+- Added a Synology overlay for kernels without CPU CFS quotas. Disabled SMTP
+  omits its optional sender instead of passing an invalid empty address.
+
+### Tiếng Việt
+
+- Thêm chế độ chỉ đăng nhập Google ở phía máy chủ; tắt đăng nhập mật khẩu, đăng ký
+  thường, khôi phục/xác minh mật khẩu và demo trong chế độ này. Người dùng Google
+  đã xác minh có workspace riêng; owner chỉ được liên kết theo email đã cấu hình.
+- Phiên mật khẩu cũ không dùng được trong Google-only. API key có phạm vi quyền
+  vẫn phục vụ tích hợp máy; sửa xử lý cookie trong callback OAuth.
+- Thêm cấu hình Google/SMTP qua file bí mật và Compose overlay. Cài mới mặc định
+  Google-only; cấu hình và khóa của hệ thống hiện có được giữ lại.
+- Làm mới giao diện sáng/tối, bố cục điện thoại/tablet/desktop; bảng/JSON cuộn trong
+  vùng riêng, tùy chọn truy vấn mobile thu gọn và hàng cây dữ liệu cao 44px.
+- Google xác minh email đăng nhập; gửi thông báo SMTP cần thông tin xác thực riêng.
+- Thêm overlay Synology cho kernel không hỗ trợ giới hạn CPU CFS. Khi tắt SMTP,
+  cấu hình bỏ địa chỉ gửi tùy chọn thay vì truyền chuỗi rỗng không hợp lệ.
+
 ## 0.1.2 - 2026-10-06
 
 ### English

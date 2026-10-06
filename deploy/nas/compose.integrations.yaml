@@ -1,0 +1,28 @@
+# Optional overlay: credentials stay in private files, never in Compose environment values.
+services:
+  app:
+    environment:
+      AUTH_MODE: ${AUTH_MODE:-mixed}
+      GOOGLE_CLIENT_ID_FILE: /run/secrets/google_client_id
+      GOOGLE_CLIENT_SECRET_FILE: /run/secrets/google_client_secret
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-465}
+      SMTP_SECURE: ${SMTP_SECURE:-true}
+      # Omit the sender completely when SMTP is disabled; an empty sender is invalid.
+      SMTP_FROM:
+      SMTP_USER_FILE: /run/secrets/smtp_user
+      SMTP_PASSWORD_FILE: /run/secrets/smtp_password
+      SMTP_CA_FILE: /run/secrets/smtp_ca
+    secrets:
+      - google_client_id
+      - google_client_secret
+      - smtp_user
+      - smtp_password
+      - smtp_ca
+
+secrets:
+  google_client_id: { file: ./secrets/google_client_id }
+  google_client_secret: { file: ./secrets/google_client_secret }
+  smtp_user: { file: ./secrets/smtp_user }
+  smtp_password: { file: ./secrets/smtp_password }
+  smtp_ca: { file: ./secrets/smtp_ca }

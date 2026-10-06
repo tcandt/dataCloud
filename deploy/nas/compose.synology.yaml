@@ -1,0 +1,5 @@
+# Optional for Synology kernels without the CPU CFS scheduler.
+# Keep the memory limit and all other container restrictions from the base file.
+services:
+  app:
+    cpus: 0

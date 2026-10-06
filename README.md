@@ -30,7 +30,7 @@ or the upstream DocumentDB project.
 
 ### Connectors in This Preview
 
-| Connector / component | Status in 0.1.2 |
+| Connector / component | Status in 0.1.3 |
 | --- | --- |
 | MongoDB adapter | Implemented; local MongoDB 4.4.29 TLS and synthetic CRUD verified |
 | DocumentDB adapter | Uses the MongoDB-compatible gateway; live upstream endpoint verification pending |
@@ -44,15 +44,17 @@ describes the intended workflow, not equivalent connector coverage or features.
 
 ## Version
 
-Current release: **0.1.2**. Each release has a Git tag, a versioned image,
+Current preview: **0.1.3**. Public images and native Synology HTTPS startup are
+verified; Google callback and SMTP delivery remain pending. See
+[verification](VERIFICATION.md). Each published release has a Git tag, a versioned image,
 release notes and a [changelog](CHANGELOG.md). See [version.json](version.json).
 
 ```text
-ghcr.io/tcandt/datacloud:0.1.2
-ghcr.io/tcandt/datacloud-certificates:0.1.2
+ghcr.io/tcandt/datacloud:0.1.3
+ghcr.io/tcandt/datacloud-certificates:0.1.3
 ```
 
-Both images publish `linux/amd64` and `linux/arm64` under the same version tag.
+The release targets `linux/amd64` and `linux/arm64` under the same version tag.
 Docker chooses the image matching the host CPU. No application source build
 is required. The runtime includes minified compiled code and third-party notices.
 
@@ -75,10 +77,18 @@ at least 4 GB available RAM for the full stack.
 
 ## Install
 
+For Synology kernels that report `NanoCPUs can not be set`, append
+`:compose.synology.yaml` to `COMPOSE_FILE` in your private `deploy/nas/.env`.
+This optional overlay sets the application CPU quota to zero (unlimited); the
+1 GB memory limit and other container restrictions remain enabled. When importing
+a merged YAML in Container Manager, keep `services.app.cpus: 0` explicitly.
+
 Clone this repository or extract the deployment ZIP from GitHub Releases.
 Setup defaults to `https://localhost:8443`. Enter your own HTTPS website origin,
-administrator email and password during setup. There is no default administrator
-email. No SMTP or Google account is required for the first owner.
+approved Google administrator email and OAuth web client credentials during setup.
+New interactive installations default to **Google-only** sign-in; there is no
+local password or default administrator email. Choose **m (mixed)** explicitly
+to retain password sign-in. Existing settings are not rewritten.
 
 Choose **E (external)** to run DataCloud against databases you already operate.
 This is the default for new interactive setups: website/API, metadata PostgreSQL
@@ -120,6 +130,33 @@ The local stack starts the website/API, PostgreSQL metadata store, MongoDB and n
 Services restart with Docker unless explicitly stopped. Enable Docker startup
 at boot; Docker Desktop may start only after you sign in.
 
+### Google Sign-In and Email
+
+Follow the [English/Vietnamese integration guide](docs/operations/GOOGLE-SMTP-NAS.md).
+Create a Google OAuth Web application client in your own project, use your exact
+HTTPS origin and authorize `PUBLIC_ORIGIN/api/v1/auth/google/callback`. Add allowed
+test users if the Google consent application is in testing mode. A logged-in
+Google browser session does not supply OAuth client or SMTP credentials.
+
+The installer stores OAuth secrets in private files and enables
+`compose.integrations.yaml`. Google-only mode disables browser password login,
+ordinary registration, password recovery and demo login. Verified Google users
+can create an isolated organization; joining an existing organization requires
+its invitation flow. The bootstrap owner links only to its explicitly configured
+verified Google email. Google verifies that email; no second password/email
+verification step is required. Scoped API keys remain available to integrations.
+
+SMTP is optional until provider credentials are supplied. Configure port 465/TLS
+or 587/required STARTTLS, an approved sender, username and app password/provider
+credential. Credentials stay in mounted secret files. SMTP serves invitations
+and the existing notification queue; configuration alone is not proof of delivery.
+
+### Responsive Console
+
+The updated light/dark interface adapts navigation, cards and forms to desktop,
+tablet and phone widths. Wide tables and JSON scroll within their own panels.
+Mobile query options can collapse while preserving projection/sort drafts.
+
 ### Install From Image Archives
 
 GitHub Releases also supply application and certificate images in TAR archives
@@ -128,7 +165,7 @@ for each CPU architecture. Use the `linux-amd64` archive on Intel/AMD hosts or
 matching archive, then use your configured deployment directory:
 
 ```sh
-docker load -i datacloud-images-v0.1.2-linux-amd64.tar
+docker load -i datacloud-images-v0.1.3-linux-amd64.tar
 DATACLOUD_NO_PULL=1 sh deploy/nas/start.sh
 ```
 
@@ -189,7 +226,8 @@ network reachability or prove endpoint compatibility. Validate the actual target
 before relying on it for operations.
 
 To select external mode on an existing installation, back up the private
-configuration and data, set `COMPOSE_FILE=compose.external.yaml`, and configure
+configuration and data, set `COMPOSE_FILE=compose.external.yaml` (retain
+`:compose.integrations.yaml` if enabled), and configure
 the approved hostnames. Existing starter connection records are preserved;
 remove those records in the website if no longer needed. Switching Compose
 files does not stop a previously running starter MongoDB automatically. Stop
@@ -210,7 +248,18 @@ rotating connections. Old raw-URI records remain readable in 0.1.2. Versions
 0.1.1 and earlier cannot read new envelopes; do not downgrade after these changes
 without restoring the matching pre-upgrade metadata backup and vault keys.
 
-Legal content remains draft. SMTP/Google live verification is deferred.
+Version 0.1.3 adds a Google session marker table. Switching to Google-only requires
+a fresh Google login; existing password sessions are refused. Do not change
+`owner_config.email` to migrate an existing owner: a mismatch refuses bootstrap
+instead of transferring ownership. Arrange a reviewed account migration before
+changing the owner identity. Older versions do not enforce Google-only policy;
+rollback requires reviewing authentication settings and restoring a matching
+metadata/secrets backup, not merely changing the image tag. Preserve the current
+backup and end active sessions before a rollback.
+
+Legal content remains draft. Native Synology startup and HTTPS access passed;
+Google callback and SMTP delivery await operator/provider completion. Current
+evidence is in VERIFICATION.md.
 Public images contain executable code that can be inspected; private source
 storage and encrypted backups do not make distributed code impossible to recover.
 

@@ -30,7 +30,11 @@ database được mã hóa trong kho bí mật phía máy chủ, không trả v�
 DataCloud là lớp quản lý, không phải database engine mới hay bản fork của
 MongoDB hoặc dự án DocumentDB upstream.
 
-## Phạm vi bản 0.1.2
+## Phạm vi bản 0.1.3
+
+Bản preview 0.1.3 đã có image công khai và đã chạy HTTPS trên NAS Synology AMD64.
+Callback Google và gửi SMTP thật vẫn chờ hoàn tất. Xem
+[kết quả kiểm tra](VERIFICATION.md) trước khi triển khai.
 
 | Thành phần | Trạng thái |
 | --- | --- |
@@ -56,10 +60,18 @@ phần cứng NAS, macOS hoặc Ubuntu riêng. Xem [bằng chứng kiểm tra](V
 
 ## Cài đặt
 
+Nếu kernel Synology báo `NanoCPUs can not be set`, thêm
+`:compose.synology.yaml` vào cuối `COMPOSE_FILE` trong `deploy/nas/.env` riêng.
+Overlay này đặt hạn mức CPU ứng dụng về 0 (không giới hạn); vẫn giữ giới hạn
+bộ nhớ 1 GB và các hạn chế container khác. Khi nhập YAML đã gộp vào Container
+Manager, cần giữ rõ `services.app.cpus: 0`.
+
 Clone repo hoặc giải nén ZIP từ Releases. Chạy trong thư mục vừa tải.
 Mặc định website là `https://localhost:8443`. Nhập origin HTTPS, email quản trị
-và mật khẩu của bạn khi cấu hình; không có email quản trị mặc định.
-Tài khoản quản trị đầu tiên không cần SMTP hay Google.
+Google quản trị được duyệt và thông tin OAuth web client của bạn khi cấu hình.
+Cài mới mặc định **chỉ đăng nhập Google**, không tạo mật khẩu cục bộ và không có
+email quản trị mặc định. Chọn **m (mixed)** nếu cần giữ đăng nhập mật khẩu.
+Công cụ không ghi đè cấu hình của hệ thống hiện có.
 
 Chọn **E (external)** để chỉ chạy DataCloud và quản lý các database bạn đã có.
 Đây là mặc định khi cấu hình mới qua màn hình nhập: website/API, PostgreSQL lưu
@@ -99,6 +111,32 @@ Docker khởi động cùng máy; Docker Desktop có thể chỉ chạy sau khi 
 HTTPS cục bộ dùng CA riêng. Xuất CA và cài vào kho tin cậy của máy trước khi
 truy cập; xem lệnh và chi tiết trong [hướng dẫn tiếng Anh](README.md).
 
+## Đăng nhập Google và email
+
+Làm theo [hướng dẫn tích hợp Anh–Việt](docs/operations/GOOGLE-SMTP-NAS.md).
+Cần OAuth client loại Web application trong dự án Google của bạn, origin HTTPS
+chính xác và callback `PUBLIC_ORIGIN/api/v1/auth/google/callback`. Khi ứng dụng
+Google ở chế độ testing, thêm người được phép vào danh sách test user. Đăng nhập
+Google trên trình duyệt không thay thế OAuth client hoặc credential SMTP.
+
+Công cụ lưu bí mật OAuth thành file riêng và bật `compose.integrations.yaml`.
+Google-only tắt đăng nhập mật khẩu, đăng ký thường, khôi phục mật khẩu và demo.
+Người dùng Google đã xác minh có thể tạo tổ chức riêng biệt; tham gia tổ chức đã
+có cần lời mời. Owner chỉ liên kết với email Google đã được cấu hình rõ ràng và
+xác minh. Google đã xác minh email nên không cần thêm mật khẩu hoặc bước xác minh
+email trùng lặp. API key có giới hạn quyền vẫn dùng được cho tích hợp máy.
+
+SMTP có thể để tắt tới khi có thông tin nhà cung cấp. Cần cổng 465/TLS hoặc 587/
+STARTTLS bắt buộc, địa chỉ gửi được duyệt, username và app password/credential.
+Thông tin xác thực nằm trong file bí mật. SMTP phục vụ lời mời và hàng đợi thông
+báo đã có; cấu hình thành công chưa đồng nghĩa gửi thư thật thành công.
+
+## Giao diện thích ứng màn hình
+
+Giao diện sáng/tối mới điều chỉnh menu, thẻ thông tin và biểu mẫu theo máy tính,
+tablet và điện thoại. Bảng rộng và JSON cuộn bên trong vùng dữ liệu. Tùy chọn truy
+vấn trên điện thoại có thể thu gọn và giữ nguyên nội dung projection/sort đang nhập.
+
 ## Kết nối database đang có
 
 Chế độ local có MongoDB khởi đầu; chế độ external không kèm database này.
@@ -124,7 +162,8 @@ chưa hỗ trợ SRV, nhiều seed hoặc tự khám phá topology. Kiểm tra e
 trước khi sử dụng cho công việc thực tế.
 
 Để chuyển hệ thống hiện có sang chế độ external, sao lưu cấu hình/dữ liệu, đặt
-`COMPOSE_FILE=compose.external.yaml` và danh sách hostname được phép. Metadata
+`COMPOSE_FILE=compose.external.yaml` (giữ thêm `:compose.integrations.yaml` nếu
+đang bật) và danh sách hostname được phép. Metadata
 kết nối cũ vẫn được giữ; xóa kết nối MongoDB mẫu trên website nếu không cần.
 Đổi file Compose không tự dừng MongoDB mẫu đang chạy. Khi phù hợp, dừng riêng
 service đó bằng file Compose local cũ và giữ nguyên dữ liệu. Chế độ external
@@ -146,7 +185,7 @@ trong Cloudflare. Truy cập origin đã cấu hình với đường dẫn `/log
 
 Đọc [CHANGELOG](CHANGELOG.md) và ghi chú phiên bản. Sao lưu dữ liệu MongoDB,
 PostgreSQL, secrets và volume chứng chỉ. Tải bộ cài mới, giữ `.env`, secrets,
-khóa vault và các volume hiện tại, đặt `APP_TAG=0.1.2`, rồi chạy script khởi động.
+khóa vault và các volume hiện tại, đặt `APP_TAG=0.1.3`, rồi chạy script khởi động.
 Không chạy `docker compose down -v` vì lệnh đó xóa volume dữ liệu.
 
 Releases có TAR image riêng cho AMD64/ARM64 và `SHA256SUMS.txt`. Chọn đúng
@@ -156,10 +195,21 @@ hoặc tải từ registry chính thức. Chi tiết nằm trong tài liệu ti�
 
 0.1.2 không đổi bảng metadata hay phiên bản engine. Sau khi tạo/thay kết nối,
 bản cũ không đọc được định dạng mã hóa mới; hạ phiên bản cần khôi phục backup
-metadata trước cập nhật cùng khóa vault. Bản 0.1.0 đã được
+metadata trước cập nhật cùng khóa vault.
+
+0.1.3 thêm bảng đánh dấu phiên Google. Bật Google-only yêu cầu đăng nhập Google
+lại; phiên mật khẩu cũ bị từ chối. Không đổi `owner_config.email` để chuyển owner:
+email không khớp khiến bootstrap từ chối khởi động, không tự chuyển quyền. Cần
+quy trình chuyển danh tính được kiểm tra trước. Bản cũ không thực thi chính sách
+Google-only; khi hạ phiên bản phải xem lại cấu hình xác thực và khôi phục backup
+metadata/secrets phù hợp, không chỉ đổi tag image. Giữ backup hiện tại và kết thúc
+phiên đang hoạt động trước khi hạ phiên bản.
+
+Bản 0.1.0 đã được
 thu hồi để gỡ thông tin cấu hình riêng; không thể thu hồi bản đã tải hoặc
-bộ nhớ đệm của bên khác. Chính sách pháp lý vẫn là bản nháp; xác minh SMTP và
-Google tiếp tục được hoãn theo yêu cầu. Triển khai endpoint thực tế cần cấu hình
+bộ nhớ đệm của bên khác. Chính sách pháp lý vẫn là bản nháp. Kiểm tra NAS, Google
+và SMTP thực tế đang tiến hành hoặc chờ cấu hình nhà cung cấp; xem VERIFICATION.md.
+Triển khai endpoint thực tế cần cấu hình
 TLS và phạm vi kiểm tra được chủ hệ thống cho phép.
 
 ## Giấy phép
