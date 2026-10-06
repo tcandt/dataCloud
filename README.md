@@ -46,7 +46,8 @@ describes the intended workflow, not equivalent connector coverage or features.
 
 Current preview: **0.1.4**. This release adds SRV/replica-set connections, editable
 plans and isolated SePay testing. See the current [verification](VERIFICATION.md)
-for image and deployment status. Earlier Google/SMTP/NAS evidence applies to 0.1.3. Each published release has a Git tag, a versioned image,
+for image and deployment status. NAS AMD64, fresh Google login, read-only MongoDB
+and a SePay Test Mode round-trip passed on 0.1.4. SMTP evidence remains from 0.1.3. Each published release has a Git tag, a versioned image,
 release notes and a [changelog](CHANGELOG.md). See [version.json](version.json).
 
 ```text
@@ -70,7 +71,7 @@ is required. The runtime includes minified compiled code and third-party notices
 
 The platform targets are image architectures, not claims of testing on every
 host listed. AMD64 Docker Desktop and ARM64 application emulation have been
-tested locally. Native Synology AMD64 was verified on the preceding release; macOS hardware has not been tested.
+tested locally. Native Synology AMD64 was verified on 0.1.4; macOS hardware has not been tested.
 ARM32, native Windows containers and other CPU architectures are not supported
 by this release. Requirements: Docker with Compose v2, persistent storage and
 at least 4 GB available RAM for the full stack.
@@ -253,9 +254,10 @@ rollback requires reviewing authentication settings and restoring a matching
 metadata/secrets backup, not merely changing the image tag. Preserve the current
 backup and end active sessions before a rollback.
 
-Legal content remains draft. The preceding 0.1.3 release passed native Synology startup, HTTPS access, live Google
-sign-in/session/logout and one SMTP test from the NAS delivered to Gmail.
-This does not verify every notification workflow. Current evidence is in VERIFICATION.md.
+Legal content remains draft. Version 0.1.4 passed native Synology startup, HTTPS,
+fresh Google sign-in, read-only MongoDB access and a SePay Test Mode round-trip.
+The 0.1.3 SMTP test delivered one message to Gmail; it does not verify every
+notification workflow or production payment settlement. Current evidence is in VERIFICATION.md.
 Public images contain executable code that can be inspected; private source
 storage and encrypted backups do not make distributed code impossible to recover.
 

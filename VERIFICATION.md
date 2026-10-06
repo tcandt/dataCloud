@@ -13,8 +13,8 @@ Status: **PREVIEW VERIFIED WITH LIMITS**. Executable images use private tag
 `v0.1.4`, revision `d455fd3be134b353b87b4798389a09bfbfe4be0b`.
 The final image workflow and private security CI passed. Public image manifests
 are recorded in [image-digests.json](image-digests.json). Source and private
-operator configuration remain unpublished. NAS upgrade and the SePay provider
-round-trip await action-time browser confirmation.
+operator configuration remain unpublished. Follow-up on 2026-10-06 verified the
+NAS 0.1.4 upgrade and an actual SePay Test Mode provider-to-platform round-trip.
 
 | Check / Kiểm tra | Current evidence / Bằng chứng hiện có |
 | --- | --- |
@@ -28,15 +28,18 @@ round-trip await action-time browser confirmation.
 | SePay Test Mode isolation | Local signed-webhook tests passed; test events left paid subscription, invoice and receipt-email state unchanged |
 | Local browser admin and checkout | Administrator plan editing and sandbox checkout intent reviewed through the actual UI |
 | Responsive console | 20 routes reviewed at actual widths of 1600 and 417 CSS pixels; no page-level horizontal overflow found. Other widths and final-image review remain pending. |
-| SePay provider dashboard | Dedicated fake bank account and VA created; DL payment-code pattern configured. Webhook HMAC registration and provider-to-platform delivery await browser action-time confirmation. |
+| SePay provider round-trip | Dedicated Test Mode HMAC webhook saved. A 29,000 VND simulator transfer reached DataCloud with HTTP 200; UI showed Test confirmed and PostgreSQL recorded PAID with synthetic=1. Subscriptions remained FREE; invoice and email-job counts remained zero. Live resend was not tested; replay coverage remains local. |
 | Final AMD64/ARM64 images | Anonymous application/certificate manifests verified; actual AMD64 and emulated ARM64 runtime checks passed, including Google-only route enforcement and MongoDB dynamic SOCKS loading. Both certificate initializers passed. Known-private-identifier scans passed for final app filesystems (17,604 AMD64 / 17,603 ARM64 files), both certificate filesystems and 10 registry metadata files; this is not an audit of every historical image layer. |
 | Public deployment files | Explicit allowlist export, known-private-identifier scan and four Compose profile validations passed, including the payments/integrations/Synology overlay |
 | Encrypted source backup | Authenticated local restore matched the original source archive SHA256; key remains private |
-| NAS 0.1.4 deployment | Pending; earlier NAS evidence below applies to 0.1.3 only |
+| NAS 0.1.4 deployment | Synology DS920+ AMD64 / DSM 7.3.1 upgrade completed; app, PostgreSQL and ingress healthy, public HTTPS health returned live/PostgreSQL. Other projects preserved. |
+| Google and existing MongoDB connection | Fresh Google callback restored the bootstrap Owner; session survived application restart. Existing read-only MongoDB connection test passed and Explorer returned 50 synthetic orders. |
+| Live catalog and restart persistence | Admin edits set Free to 3 connections, Pro to 29,000 VND and Team to 79,000 VND per 30-day testing period. Catalog and confirmed sandbox payment survived application restart. Legacy Free null price required audited operator normalization; see migration notes. |
+| Pre-upgrade backup | PostgreSQL custom archive created in persistent storage; archive catalog readable. Full restore was not tested. |
 
-Paid plans remain disabled until the platform administrator explicitly enables
-them. Suggested Pro/Team prices are configuration proposals, not proof of a live
-merchant integration. Test provider ledger entries are synthetic and do not
+Paid plans are disabled by default until the platform administrator enables
+them. The tested installation enabled Pro/Team for sandbox checkout only; this
+is not proof of production merchant settlement. Test provider ledger entries are synthetic and do not
 grant paid entitlements. Supported database engines remain MongoDB and the
 MongoDB-compatible DocumentDB gateway; SRV support does not add SQL connectors.
 
@@ -51,9 +54,25 @@ Manifest và digest của cả image ứng dụng lẫn chứng chỉ đã xác 
 MongoDB 4.4 TLS cục bộ đạt seed list và SRV/TXT; chưa có tài khoản Atlas thật.
 Giao diện admin sửa gói và checkout sandbox đã kiểm tra cục bộ. Đã rà 20 trang ở
 1600 và 417 CSS pixel, không thấy tràn ngang toàn trang; chưa xác minh mọi kích thước.
-SePay đã có ngân hàng, VA và mẫu mã thanh toán giả lập riêng; webhook và kiểm thử
-xuyên suốt còn chờ xác nhận thao tác trình duyệt. NAS hiện vẫn chạy 0.1.3.
+NAS Synology AMD64 đã nâng lên 0.1.4; ứng dụng, PostgreSQL và ingress khỏe mạnh.
+Đăng nhập Google mới khôi phục đúng Owner; kết nối MongoDB chỉ đọc trả 50 bản ghi thử.
+Webhook SePay Test Mode đã nhận giao dịch giả lập 29.000đ với HTTP 200; giao diện
+hiện Test confirmed, ledger PAID và synthetic=1. Subscription vẫn FREE, không có
+hóa đơn hoặc email thanh toán. Giá gói và giao dịch giữ sau khởi động lại.
+Chưa thử gửi lại webhook trực tiếp; kiểm tra chống xử lý trùng là bằng chứng cục bộ.
 Bản sao mã nguồn mã hóa đã thử khôi phục thành công; khóa giữ riêng tư.
+
+Operational follow-up does not change the executable images, release tag or
+original ZIP checksums. Receipts inside the original ZIP describe publication-time
+state; current main-branch docs and the release description include this follow-up.
+The MongoDB route uses a verified TLS ingress bridge with a same-NAS plaintext
+backend hop; it does not establish end-to-end TLS to mongod. SMTP delivery evidence
+remains the historical 0.1.3 test, not a new 0.1.4 notification-flow test.
+
+Bổ sung bằng chứng vận hành không thay image, tag hoặc checksum ZIP gốc. Tài liệu
+trong ZIP ghi trạng thái lúc phát hành; tài liệu nhánh main và mô tả release được
+cập nhật. Kết nối MongoDB dùng cầu nối TLS hợp lệ, đoạn backend trên cùng NAS
+vẫn không mã hóa. SMTP vẫn là bằng chứng bản 0.1.3, chưa thử lại toàn luồng ở 0.1.4.
 
 ## Historical 0.1.3 checks / Kiểm tra bản trước
 

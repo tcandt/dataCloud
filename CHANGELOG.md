@@ -28,9 +28,10 @@ Version format: MAJOR.MINOR.PATCH. Preview versions may require migration review
 - Added a separate SePay Test Mode provider with distinct webhook credentials,
   synthetic ledger entries and test settlement events. Test payments cannot grant
   paid subscriptions, invoices or billing receipt emails. Local signed-webhook
-  tests passed; real provider webhook configuration and end-to-end UAT are pending.
+  tests passed. Follow-up: dedicated HMAC webhook and a real provider Test Mode
+  round-trip passed with HTTP 200; no production payment was made.
 - Metadata adds catalog state/history and checkout catalog revisions. Follow the
-  migration and rollback notes in [release notes](RELEASE-NOTES.md). AMD64/ARM64 image manifests and runtime checks passed; NAS upgrade remains pending.
+  migration and rollback notes in [release notes](RELEASE-NOTES.md). AMD64/ARM64 image manifests and runtime checks passed; NAS AMD64 upgrade and restart persistence passed in the follow-up.
 
 ### Tiếng Việt
 
@@ -52,10 +53,10 @@ Version format: MAJOR.MINOR.PATCH. Preview versions may require migration review
   tắt. Giảm hạn mức không xóa tài nguyên hiện có.
 - Tách riêng nhà cung cấp SePay Test Mode, khóa webhook, sổ giao dịch giả lập và
   sự kiện thử nghiệm. Thanh toán thử không cấp gói trả phí, invoice hay email
-  biên nhận thật. Kiểm tra webhook ký cục bộ đã đạt; cấu hình webhook thật trên
-  SePay và kiểm thử xuyên suốt với nhà cung cấp vẫn đang chờ.
+  biên nhận thật. Kiểm tra webhook ký cục bộ đã đạt. Bổ sung: webhook HMAC và
+  giao dịch Test Mode xuyên suốt từ SePay đạt HTTP 200; không thanh toán tiền thật.
 - Metadata thêm trạng thái/lịch sử danh mục và revision trong checkout. Xem
-  [ghi chú nâng/hạ phiên bản](RELEASE-NOTES.md). Đã xác minh manifest và runtime image AMD64/ARM64; triển khai nâng cấp NAS còn chờ.
+  [ghi chú nâng/hạ phiên bản](RELEASE-NOTES.md). Đã xác minh manifest và runtime image AMD64/ARM64; nâng NAS AMD64 và giữ dữ liệu sau khởi động lại đã đạt trong đợt bổ sung.
 
 ## 0.1.3 - 2026-10-06
 

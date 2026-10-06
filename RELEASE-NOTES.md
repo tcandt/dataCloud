@@ -1,6 +1,6 @@
 # DataCloud 0.1.4 — release notes / ghi chú phát hành
 
-**Status / Trạng thái:** preview release verified locally and in published AMD64/ARM64 images. NAS 0.1.4 upgrade and SePay provider round-trip remain pending. / Bản preview đã kiểm tra cục bộ và với image AMD64/ARM64 đã công bố; nâng NAS 0.1.4 và kiểm thử xuyên suốt SePay còn chờ. See / Xem [VERIFICATION.md](VERIFICATION.md).
+**Status / Trạng thái:** preview release verified locally and in published AMD64/ARM64 images. NAS AMD64 deployment and the SePay Test Mode round-trip passed in the operational follow-up. / Bản preview đã kiểm tra cục bộ, image AMD64/ARM64, nâng NAS AMD64 và luồng SePay Test Mode thực tế. See / Xem [VERIFICATION.md](VERIFICATION.md).
 
 ## English
 
@@ -49,8 +49,10 @@ SePay Test Mode uses a separate provider and webhook credential, synthetic
 ledger entries and test settlement events. Test payments cannot activate a paid
 subscription, issue an invoice or send a real billing receipt. Signed local
 webhook tests passed. A dedicated fake bank account, virtual account and payment-code pattern were configured in the provider
-dashboard, but the webhook has not yet been saved and provider-to-platform
-end-to-end verification is pending. No live payment completion is claimed.
+dashboard. The dedicated HMAC webhook accepted a simulator payment of 29,000 VND
+with HTTP 200. DataCloud showed Test confirmed; PostgreSQL recorded a synthetic
+PAID checkout while subscriptions remained FREE, with no invoices or email jobs.
+No real funds moved. Live provider replay was not tested; local idempotency tests passed.
 
 ### Migration and rollback
 
@@ -67,6 +69,10 @@ does not overwrite an administrator-edited policy. Existing deployments retain
 their stored plans; administrators explicitly apply new prices or the proposed
 Free limit if desired.
 
+Legacy catalogs with a null Free price require an audited operator normalization
+to zero VND; the 0.1.4 plan editor cannot change the Free price. This was performed
+for the tested installation without changing the executable image.
+
 After plan edits or new checkouts, do not roll back only the image: older code
 does not honor catalog revisions and may replace edited policy from startup
 configuration. Pause checkout/webhook processing, record pending intents, and
@@ -77,8 +83,19 @@ duplicate or missed settlement. Do not delete catalog history as a shortcut.
 The 0.1.3 Google-only session and 0.1.2 encrypted connection-envelope restrictions
 still apply. Google/SMTP setup is independent of payment configuration. Legal
 content remains `DRAFT_AI`; additional engines, durable backup jobs and full
-upstream DocumentDB acceptance are unfinished. Earlier NAS runtime receipts do not
-verify the pending 0.1.4 NAS upgrade.
+upstream DocumentDB acceptance are unfinished.
+
+### Operational follow-up — 2026-10-06
+
+Synology AMD64 upgraded to 0.1.4 after a PostgreSQL archive backup (catalog
+readability checked, full restore not tested). App/PostgreSQL/ingress health and
+public HTTPS passed. Fresh Google sign-in restored Owner; the existing MongoDB
+read-only connection returned 50 synthetic orders. Free 0 VND/3 connections, Pro
+29,000 VND and Team 79,000 VND were configured for testing. Catalog changes,
+session and confirmed sandbox payment persisted across application restart.
+The MongoDB TLS bridge has a plaintext backend hop on the same NAS. Native ARM64
+and real Atlas remain unverified. This receipt update preserves image digests,
+release tags and original ZIP checksums; ZIP receipts reflect publication time.
 
 ## Tiếng Việt
 
@@ -122,9 +139,11 @@ giá được duyệt lúc tạo dù admin đổi giá hoặc tắt gói sau đ�
 SePay Test Mode là nhà cung cấp riêng, dùng khóa webhook riêng và đánh dấu rõ
 giao dịch giả lập. Thanh toán thử không kích hoạt subscription trả phí, tạo
 invoice hay gửi email biên nhận thật. Kiểm tra webhook ký cục bộ đã đạt. Đã tạo
-tài khoản ngân hàng, VA và mẫu mã thanh toán giả lập riêng trong dashboard, nhưng chưa lưu webhook
-và chưa hoàn tất kiểm thử xuyên suốt SePay–DataCloud. Không tuyên bố có giao
-dịch tiền thật thành công.
+tài khoản ngân hàng, VA và mẫu mã thanh toán giả lập riêng trong dashboard.
+Webhook HMAC đã nhận giao dịch giả lập 29.000đ với HTTP 200. DataCloud hiện Test
+confirmed; PostgreSQL lưu checkout PAID giả lập, subscription vẫn FREE, không
+phát sinh hóa đơn hoặc email. Không chuyển tiền thật. Chưa thử gửi lại webhook
+trực tiếp; kiểm tra chống xử lý trùng cục bộ đã đạt.
 
 ### Nâng cấp và hạ phiên bản
 
@@ -139,6 +158,10 @@ sách hiện có trở thành revision 1; checkout cũ dùng revision này. Cấ
 Bản cài hiện có giữ gói đang lưu; admin cần áp dụng rõ ràng giá mới hoặc hạn
 mức Free đề xuất nếu muốn dùng.
 
+Danh mục cũ có giá Free null cần bảo trì có audit để chuẩn hóa thành 0 VND;
+trình sửa gói 0.1.4 chưa sửa được giá Free. Bản cài kiểm thử đã được chuẩn hóa
+bằng cách này, không thay đổi image ứng dụng.
+
 Sau khi sửa gói hoặc tạo checkout, không chỉ hạ tag image: mã cũ không xử lý
 snapshot revision và có thể ghi đè gói từ cấu hình khởi động. Tạm dừng xử lý
 checkout/webhook, ghi nhận giao dịch đang chờ rồi khôi phục bộ backup metadata
@@ -149,4 +172,15 @@ lịch sử catalog để thay thế quy trình rollback.
 Giới hạn Google-only của 0.1.3 và định dạng bí mật kết nối mã hóa từ 0.1.2 vẫn
 áp dụng. Google/SMTP độc lập với cấu hình thanh toán. Pháp lý vẫn `DRAFT_AI`;
 các engine khác, tác vụ backup bền vững và xác nhận đầy đủ DocumentDB upstream
-chưa hoàn thiện. Bằng chứng vận hành NAS bản trước không xác minh được lần nâng NAS 0.1.4 đang chờ.
+chưa hoàn thiện.
+
+### Bổ sung vận hành — 2026-10-06
+
+NAS Synology AMD64 đã nâng lên 0.1.4 sau khi sao lưu PostgreSQL (đọc được danh mục
+archive, chưa thử khôi phục đầy đủ). App/PostgreSQL/ingress và HTTPS đạt. Đăng nhập
+Google mới khôi phục Owner; kết nối MongoDB chỉ đọc trả 50 bản ghi thử. Đã cấu hình
+Free 0đ/3 kết nối, Pro 29.000đ và Team 79.000đ để thử nghiệm. Giá gói, phiên đăng
+nhập và giao dịch sandbox giữ sau khởi động lại ứng dụng. Cầu nối TLS MongoDB có
+đoạn backend không mã hóa trên cùng NAS. Chưa thử ARM64 nguyên bản hoặc Atlas thật.
+Bổ sung này giữ nguyên digest image, tag và checksum ZIP; tài liệu trong ZIP ghi
+trạng thái lúc phát hành.

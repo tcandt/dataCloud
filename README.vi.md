@@ -34,7 +34,8 @@ MongoDB hoặc dự án DocumentDB upstream.
 
 Bản preview 0.1.4 bổ sung kết nối SRV/replica set, sửa gói từ admin và SePay
 Test Mode độc lập. Xem [kết quả kiểm tra](VERIFICATION.md) về image và triển khai.
-Bằng chứng NAS/Google/SMTP trước đó thuộc phiên bản 0.1.3.
+NAS AMD64, đăng nhập Google mới, MongoDB chỉ đọc và SePay Test Mode thực tế đã
+đạt ở 0.1.4. Bằng chứng SMTP vẫn thuộc bản 0.1.3.
 
 | Thành phần | Trạng thái |
 | --- | --- |
@@ -55,8 +56,8 @@ Engine trên Linux/Ubuntu/NAS hoặc Docker Desktop trên macOS Intel/Apple Sili
 Yêu cầu Compose v2, ổ lưu trữ bền vững và ít nhất 4 GB RAM khả dụng cho cả stack.
 Chưa hỗ trợ ARM32 hoặc Windows containers nguyên bản.
 
-Đã kiểm tra Docker Desktop AMD64 và chạy ARM64 bằng giả lập. Chưa kiểm tra trên
-NAS cho bản 0.1.4, phần cứng macOS hoặc Ubuntu riêng; NAS Synology AMD64 đã được kiểm tra ở bản 0.1.3. Xem [bằng chứng kiểm tra](VERIFICATION.md).
+Đã kiểm tra Docker Desktop AMD64, ARM64 giả lập và NAS Synology AMD64 ở bản
+0.1.4. Chưa kiểm tra NAS ARM64 nguyên bản, phần cứng macOS hoặc Ubuntu riêng. Xem [bằng chứng kiểm tra](VERIFICATION.md).
 
 ## Cài đặt
 
@@ -215,8 +216,8 @@ phiên đang hoạt động trước khi hạ phiên bản.
 
 Bản 0.1.0 đã được
 thu hồi để gỡ thông tin cấu hình riêng; không thể thu hồi bản đã tải hoặc
-bộ nhớ đệm của bên khác. Chính sách pháp lý vẫn là bản nháp. NAS, Google
-và một thư SMTP đã được kiểm tra ở bản 0.1.3; nâng NAS 0.1.4 còn chờ. Xem VERIFICATION.md.
+bộ nhớ đệm của bên khác. Chính sách pháp lý vẫn là bản nháp. NAS, Google, MongoDB
+chỉ đọc và SePay Test Mode đã kiểm tra ở 0.1.4; một thư SMTP đã đạt ở 0.1.3. Xem VERIFICATION.md.
 Triển khai endpoint thực tế cần cấu hình
 TLS và phạm vi kiểm tra được chủ hệ thống cho phép.
 
