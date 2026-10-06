@@ -5,6 +5,23 @@
 Every published version has a matching Git tag, release notes and Docker tags.
 Version format: MAJOR.MINOR.PATCH. Preview versions may require migration review.
 
+## 0.1.5 — 2026-10-06
+
+### English
+- Platform-only Customers directory: contacts, plans, expiry, measured usage and observed activity. Audited manual grants, suspension, cancellation and reactivation use version checks and durable replay protection.
+- Background expiry and optional encrypted renewal notices; no automatic charging. Distinguish measured quotas from unmetered policy.
+- Explicit Atlas tier command denials become unsupported capabilities; unrelated database failures retain their error classification.
+- Prevent intermediary analytics injection with `Cache-Control: no-transform`, including production HTML/assets, while retaining strict CSP.
+- Normalize legacy Free price display without rewriting catalog history. Add bilingual subscription operations guide.
+- Real local PostgreSQL concurrency and complete synthetic restore acceptance, plus responsive customer UI review. Human release review approved; see VERIFICATION.md for deployment status.
+
+### Tiếng Việt
+- Thêm Customers cho chủ nền tảng: khách hàng, gói, hạn dùng, mức dùng và hoạt động. Cấp/gia hạn/tạm ngưng/hủy/kích hoạt lại có nhật ký, kiểm tra phiên bản và chống lặp.
+- Tự xử lý gói đến hạn; email nhắc hạn tùy chọn, không tự thu tiền. Đánh dấu hạn mức chưa đo.
+- Hiển thị đúng hạn chế lệnh Atlas; giữ lỗi xác thực/kết nối khác. Chặn chèn analytics bằng `no-transform`, giữ CSP nghiêm ngặt.
+- Chuẩn hóa hiển thị giá Free, thêm hướng dẫn Anh–Việt.
+- Đã kiểm tra PostgreSQL đồng thời, phục hồi dữ liệu giả lập và giao diện responsive. Chủ nền tảng đã duyệt; xem VERIFICATION.md về triển khai.
+
 ## 0.1.4 - 2026-10-06
 
 ### English

@@ -20,7 +20,7 @@ services:
       - mongo_tls:/mongo
       - public_ca:/public-ca
       - ingress_tls:/ingress
-    image: ghcr.io/tcandt/datacloud-certificates:${APP_TAG:-0.1.4}
+    image: ghcr.io/tcandt/datacloud-certificates:${APP_TAG:-0.1.5}
   postgres:
     image: postgres:17-bookworm
     restart: unless-stopped
@@ -112,7 +112,7 @@ services:
       retries: 12
       start_period: 45s
   app:
-    image: ghcr.io/tcandt/datacloud:${APP_TAG:-0.1.4}
+    image: ghcr.io/tcandt/datacloud:${APP_TAG:-0.1.5}
     user: 1000:1000
     read_only: true
     init: true
@@ -140,6 +140,8 @@ services:
       TRUSTED_PROXY_IPS: ${INGRESS_IP:-172.30.240.2}
       NODE_EXTRA_CA_CERTS: /run/tls/ca.pem
       LEGAL_MONITOR_ENABLED: "false"
+      SUBSCRIPTION_REMINDERS_ENABLED: ${SUBSCRIPTION_REMINDERS_ENABLED:-false}
+      SUBSCRIPTION_REMINDER_DAYS: ${SUBSCRIPTION_REMINDER_DAYS:-3}
     secrets:
       - database_url
       - vault_keys

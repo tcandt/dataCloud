@@ -1,5 +1,7 @@
 # DataCloud
 
+
+
 [English](README.md) | [Tiếng Việt](README.vi.md)
 
 **DataCloud is an independent third-party platform for managing databases through
@@ -30,7 +32,7 @@ or the upstream DocumentDB project.
 
 ### Connectors in This Preview
 
-| Connector / component | Status in 0.1.4 |
+| Connector / component | Status in 0.1.5 |
 | --- | --- |
 | MongoDB adapter | Implemented; local MongoDB 4.4.29 TLS and synthetic CRUD verified |
 | DocumentDB adapter | Uses the MongoDB-compatible gateway; live upstream endpoint verification pending |
@@ -44,15 +46,16 @@ describes the intended workflow, not equivalent connector coverage or features.
 
 ## Version
 
-Current preview: **0.1.4**. This release adds SRV/replica-set connections, editable
-plans and isolated SePay testing. See the current [verification](VERIFICATION.md)
+Current preview: **0.1.5**. This release adds platform customer/subscription
+administration, background expiry, opt-in renewal reminders and Atlas/CSP fixes.
+See the [customer guide](docs/operations/CUSTOMER-SUBSCRIPTIONS.md). See the current [verification](VERIFICATION.md)
 for image and deployment status. NAS AMD64, fresh Google login, read-only MongoDB
 and a SePay Test Mode round-trip passed on 0.1.4. SMTP evidence remains from 0.1.3. Each published release has a Git tag, a versioned image,
 release notes and a [changelog](CHANGELOG.md). See [version.json](version.json).
 
 ```text
-ghcr.io/tcandt/datacloud:0.1.4
-ghcr.io/tcandt/datacloud-certificates:0.1.4
+ghcr.io/tcandt/datacloud:0.1.5
+ghcr.io/tcandt/datacloud-certificates:0.1.5
 ```
 
 The release targets `linux/amd64` and `linux/arm64` under the same version tag.
@@ -160,7 +163,7 @@ Mobile query options can collapse while preserving projection/sort drafts.
 
 ### Release Downloads
 
-Version 0.1.4 supplies a deployment ZIP, image digests and `SHA256SUMS.txt`.
+Version 0.1.5 supplies a deployment ZIP, image digests and `SHA256SUMS.txt`.
 Application and certificate images are pulled anonymously from GHCR; Docker
 selects AMD64 or ARM64 automatically. This release does not include offline TAR
 archives. Earlier release archives remain tied to their original versions.

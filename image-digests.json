@@ -1,15 +1,15 @@
 {
-  "version": "0.1.4",
+  "version": "0.1.5",
   "application": {
-    "image": "ghcr.io/tcandt/datacloud:0.1.4",
-    "indexDigest": "sha256:ce858335c713c0ee85275efe9c34016d8be9aeb171c95f7e12712314cffb4823",
-    "linux/amd64": "sha256:ec34de82e7e77b589096eb1f78e42d293611b88dcdb06d15fa12fbdaab30c3d2",
-    "linux/arm64": "sha256:5215a2a75e2ac936869a00e3c8cca632063adba1d406d9e84dd66d69a5eadb5e"
+    "image": "ghcr.io/tcandt/datacloud:0.1.5",
+    "indexDigest": "sha256:4d05b2a6543440b2de91768e50c315ffa5696a089a337d31e4a1bf75f7868ce8",
+    "linux/amd64": "sha256:af4e6b5c59d870923f7e61d75d7a4366773019f012eb81b54f581e532660cf86",
+    "linux/arm64": "sha256:293461cf4fe6354a585bf8630c83d52178bbcd262d161a84d85db282976dc90a"
   },
   "certificates": {
-    "image": "ghcr.io/tcandt/datacloud-certificates:0.1.4",
-    "indexDigest": "sha256:be40dc14d9f1bcf6cd00a37a067ae127c8d0b4dea5232d92e0691756e541f3bc",
-    "linux/amd64": "sha256:4cb0d43af7d8a95ee437372404bd74cb65960ea97bf95528c2c26e297d50874c",
-    "linux/arm64": "sha256:70e2d87cd343938231510f538674d0d5a81e47370b017d6d71d069a8d619d398"
+    "image": "ghcr.io/tcandt/datacloud-certificates:0.1.5",
+    "indexDigest": "sha256:b5feaf9f99f31355f90ee635b086e004f9f58d420bceec5d0bfb5dd00e0c8829",
+    "linux/amd64": "sha256:751360411f265a8171b47e462a80bab7162b138231168d4975da42d531c46ccd",
+    "linux/arm64": "sha256:23748dc73004bcd0c662593ba7ae3a6d07a1b8f399ca289df04f8bd51f1cdb4a"
   }
 }

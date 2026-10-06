@@ -125,6 +125,34 @@ Tunnel chỉ phục vụ website, không mở giao thức database.
 
 ## Local verification / Kiểm tra cục bộ
 
+### Troubleshooting: Cloudflare beacon and Atlas operations
+
+`static.cloudflareinsights.com/beacon.min.js` blocked by `script-src 'self'`
+means Cloudflare Web Analytics injection conflicts with this console's same-origin
+script policy. It affects client analytics, not database connections. Disable
+automatic Web Analytics injection for the console if it is not needed. Do not
+remove CSP or allow arbitrary scripts to hide the warning. If analytics is an
+explicit requirement, review the precise script and reporting destinations in the
+[Cloudflare CSP FAQ](https://developers.cloudflare.com/web-analytics/faq/#what-do-i-need-to-add-to-my-content-security-policy-csp).
+
+Atlas can reject `currentOp` with code 8000 and a tier-specific denial even when
+ordinary database reads work. Version 0.1.4 reports this as an unknown capability
+and a 503 operation failure. The next source fix classifies only explicit Atlas
+tier denials as unsupported; it does not classify every code 8000 as unsupported.
+Existing UI handling then displays the capability limitation and stops polling
+that unsupported endpoint. This source fix is not in the immutable 0.1.4 images.
+
+Script thống kê Cloudflare bị chặn bởi `script-src 'self'` chỉ ảnh hưởng thống kê
+truy cập, không gây lỗi kết nối database. Nếu không cần thống kê trên console,
+tắt tự động chèn Web Analytics cho website đó. Không bỏ CSP hoặc cho phép mọi
+script chỉ để hết cảnh báo; nếu cần thống kê, đối chiếu đúng nguồn trong FAQ trên.
+
+Atlas có thể từ chối `currentOp` với mã 8000 do giới hạn gói dù vẫn đọc database
+được. Bản 0.1.4 nhận diện trường hợp này thành unknown và trả 503. Bản sửa mã nguồn
+kế tiếp nhận diện riêng thông báo từ chối theo gói Atlas thành tính năng không
+được hỗ trợ; giao diện sẵn có sẽ ngừng gọi lặp endpoint đó. Không coi mọi lỗi 8000
+là giới hạn gói. Bản sửa chưa nằm trong image 0.1.4 đã phát hành.
+
 On 2026-10-06 the seven NAS configuration tests passed, including password-free
 Google-only owner configuration, private credential files, the cross-platform
 Compose separator, missing OAuth credentials and SMTP transport validation. The

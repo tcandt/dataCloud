@@ -74,7 +74,7 @@ export async function configureNas(directory, input) {
   for (const [file, value] of Object.entries(records)) await writeFile(resolve(secrets, file), value ? `${value}\n` : '', { flag: 'wx', mode: 0o444 });
   await writeFile(resolve(directory, '.env'), [
     `PUBLIC_ORIGIN=${origin.origin}`, `PUBLIC_HOST=${origin.hostname}`, `WEB_BIND_IP=${bindIp}`,
-    'WEB_PORT=8081', 'HTTPS_PORT=8443', ...(!external ? [`MONGO_DATA_DIR="${dataDirectory}"`] : []), 'APP_TAG=0.1.4',
+    'WEB_PORT=8081', 'HTTPS_PORT=8443', ...(!external ? [`MONGO_DATA_DIR="${dataDirectory}"`] : []), 'APP_TAG=0.1.5',
     `DEPLOYMENT_MODE=${deploymentMode}`, 'COMPOSE_PATH_SEPARATOR=:', `COMPOSE_FILE=${external ? 'compose.external.yaml' : 'compose.yaml'}${integrations ? ':compose.integrations.yaml' : ''}`,
     `AUTH_MODE=${authMode}`,
     ...(smtp ? [`SMTP_HOST=${smtp.host}`, `SMTP_PORT=${smtp.port}`, `SMTP_SECURE=${smtp.port === 465}`, `SMTP_FROM='${smtp.from}'`] : []),

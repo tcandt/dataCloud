@@ -1,9 +1,9 @@
 {
   "product": "DataCloud",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "date": "2026-10-06",
-  "applicationImage": "ghcr.io/tcandt/datacloud:0.1.4",
-  "certificatesImage": "ghcr.io/tcandt/datacloud-certificates:0.1.4",
+  "applicationImage": "ghcr.io/tcandt/datacloud:0.1.5",
+  "certificatesImage": "ghcr.io/tcandt/datacloud-certificates:0.1.5",
   "platforms": [
     "linux/amd64",
     "linux/arm64"
