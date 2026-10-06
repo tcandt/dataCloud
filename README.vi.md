@@ -101,9 +101,11 @@ truy cập; xem lệnh và chi tiết trong [hướng dẫn tiếng Anh](README.
 
 ## Kết nối database đang có
 
-MongoDB trong bộ cài là database khởi đầu. Để thêm MongoDB bên ngoài hoặc gateway
+Chế độ local có MongoDB khởi đầu; chế độ external không kèm database này.
+Để thêm MongoDB bên ngoài hoặc gateway
 DocumentDB, thêm hostname vào `DATABASE_ALLOWED_HOSTS` trong
-`deploy/nas/.env` riêng, giữ `documentdb`, rồi khởi động lại ứng dụng. Ví dụ:
+`deploy/nas/.env` riêng, giữ `documentdb` nếu dùng database khởi đầu, rồi khởi động
+lại ứng dụng. Ví dụ:
 
 ```dotenv
 DATABASE_ALLOWED_HOSTS=documentdb,mongo.example.invalid
@@ -156,8 +158,9 @@ hoặc tải từ registry chính thức. Chi tiết nằm trong tài liệu ti�
 bản cũ không đọc được định dạng mã hóa mới; hạ phiên bản cần khôi phục backup
 metadata trước cập nhật cùng khóa vault. Bản 0.1.0 đã được
 thu hồi để gỡ thông tin cấu hình riêng; không thể thu hồi bản đã tải hoặc
-bộ nhớ đệm của bên khác. Chính sách pháp lý vẫn là bản nháp; xác minh SMTP,
-Google và triển khai endpoint thực tế tiếp tục được hoãn theo yêu cầu.
+bộ nhớ đệm của bên khác. Chính sách pháp lý vẫn là bản nháp; xác minh SMTP và
+Google tiếp tục được hoãn theo yêu cầu. Triển khai endpoint thực tế cần cấu hình
+TLS và phạm vi kiểm tra được chủ hệ thống cho phép.
 
 ## Giấy phép
 

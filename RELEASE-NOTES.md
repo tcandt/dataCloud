@@ -25,7 +25,7 @@ Update with your existing private settings, secrets and volumes; set
 `APP_TAG=0.1.2` and run the startup script. Back up metadata and vault keys first.
 There is no engine upgrade or table migration. New/rotated connection records use
 a secret envelope that older versions cannot read: rollback requires the matching
-pre-update metadata backup. See [verification](VERIFICATION.md) for tested scope.
+pre-update metadata backup. See [verification](https://github.com/tcandt/dataCloud/blob/v0.1.2/VERIFICATION.md) for tested scope.
 Legal drafts and SMTP/Google live validation remain deferred.
 
 ## Tiếng Việt
@@ -53,5 +53,5 @@ Khi nâng cấp, giữ cấu hình riêng, secrets, volume và đặt `APP_TAG=0
 script khởi động. Sao lưu metadata và khóa vault trước. Không nâng engine hoặc
 đổi bảng metadata. Kết nối tạo/thay ở bản này dùng định dạng mã hóa mới mà bản cũ
 không đọc được; hạ phiên bản cần khôi phục backup metadata trước cập nhật.
-Xem [kết quả kiểm tra](VERIFICATION.md) để biết phạm vi thực tế. Pháp lý vẫn là
+Xem [kết quả kiểm tra](https://github.com/tcandt/dataCloud/blob/v0.1.2/VERIFICATION.md) để biết phạm vi thực tế. Pháp lý vẫn là
 bản nháp; xác minh SMTP/Google trực tiếp tiếp tục được hoãn.

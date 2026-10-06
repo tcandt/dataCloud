@@ -164,10 +164,10 @@ docker compose cp app:/run/tls/ca.pem ./nas-public-ca.pem
 
 ## Connect Your Existing Database
 
-The supplied MongoDB container is a local starter database. You can also add
+Local mode includes a starter MongoDB container; external mode does not. Add
 an approved external MongoDB or DocumentDB gateway in the website's Connections
 view. Add its hostname to `DATABASE_ALLOWED_HOSTS` in your private
-`deploy/nas/.env`, preserving `documentdb` for the starter connection, then
+`deploy/nas/.env`, preserving `documentdb` if using the starter connection, then
 restart the application. Example with a reserved documentation hostname:
 
 ```dotenv
