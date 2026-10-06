@@ -3,6 +3,7 @@ import { access, mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { createInterface, emitKeypressEvents } from 'node:readline';
 import { pathToFileURL } from 'node:url';
+import { isIP } from 'node:net';
 
 function bounded(value, label, maximum = 256) {
   if (typeof value !== 'string' || !value.trim() || value.length > maximum || /[\x00-\x1f\x7f]/.test(value)) throw new Error(`Invalid ${label}`);
@@ -10,6 +11,11 @@ function bounded(value, label, maximum = 256) {
 }
 
 export async function configureNas(directory, input) {
+  const deploymentMode = input.deploymentMode ?? 'local';
+  if (!['local', 'external'].includes(deploymentMode)) throw new Error('Invalid deployment mode');
+  const external = deploymentMode === 'external';
+  const allowedHosts = input.allowedHosts ?? (external ? '' : 'documentdb');
+  if (typeof allowedHosts !== 'string' || allowedHosts.length > 4096 || (allowedHosts && allowedHosts.split(',').some(host => !isIP(host) && !/^(?=.{1,253}$)[a-zA-Z0-9](?:[a-zA-Z0-9.-]*[a-zA-Z0-9])?$/.test(host)))) throw new Error('Use comma-separated database hostnames or IP addresses without spaces or ports');
   const origin = new URL(input.origin);
   if (origin.protocol !== 'https:' || origin.origin !== input.origin || origin.username || origin.password) throw new Error('Use an exact HTTPS website origin');
   const email = bounded(input.email, 'owner email', 254).toLowerCase();
@@ -17,10 +23,10 @@ export async function configureNas(directory, input) {
   if (typeof input.password !== 'string' || input.password.length < 12 || input.password.length > 256 || Buffer.byteLength(input.password) > 1024 || /[\x00-\x1f\x7f]/.test(input.password)) throw new Error('Owner password must contain 12 to 256 characters');
   const name = bounded(input.name, 'owner name', 100);
   const organizationName = bounded(input.organizationName, 'organization name', 100);
-  const dataDirectory = bounded(input.mongoDataDirectory, 'MongoDB data directory', 2048);
+  const dataDirectory = external ? './data' : bounded(input.mongoDataDirectory, 'MongoDB data directory', 2048);
   if (/["'$`\\]/.test(dataDirectory)) throw new Error('MongoDB data directory must be a Linux path without quotes, backslashes or variable substitution');
   const absoluteDataPath = dataDirectory.startsWith('/') || /^[A-Za-z]:\//.test(dataDirectory);
-  if (input.existingMongo && (!absoluteDataPath || !input.mongoPassword)) throw new Error('An existing MongoDB database requires its absolute data path and existing password');
+  if (!external && input.existingMongo && (!absoluteDataPath || !input.mongoPassword)) throw new Error('An existing MongoDB database requires its absolute data path and existing password');
   const mongoPassword = input.mongoPassword || randomBytes(32).toString('base64url');
   bounded(mongoPassword, 'MongoDB password', 256);
   const token = input.tunnelToken?.trim() || '';
@@ -37,11 +43,11 @@ export async function configureNas(directory, input) {
   const pgPassword = randomBytes(32).toString('base64url');
   const records = {
     postgres_password: pgPassword,
-    mongo_password: mongoPassword,
+    ...(!external ? { mongo_password: mongoPassword } : {}),
     database_url: `postgresql://control_plane:${pgPassword}@postgres:5432/control_plane?sslmode=verify-full`,
     vault_keys: `v1:${randomBytes(32).toString('base64')}`,
     owner_config: JSON.stringify({ email, name, password: input.password, organizationName }),
-    mongo_uri: `mongodb://docdbadmin:${encodeURIComponent(mongoPassword)}@documentdb:27017/?authSource=admin&tls=true&directConnection=true`,
+    ...(!external ? { mongo_uri: `mongodb://docdbadmin:${encodeURIComponent(mongoPassword)}@documentdb:27017/?authSource=admin&tls=true&directConnection=true` } : {}),
     tunnel_token: token,
   };
   // The private host directory protects files readable by container UIDs.
@@ -49,10 +55,11 @@ export async function configureNas(directory, input) {
   for (const [file, value] of Object.entries(records)) await writeFile(resolve(secrets, file), value ? `${value}\n` : '', { flag: 'wx', mode: 0o444 });
   await writeFile(resolve(directory, '.env'), [
     `PUBLIC_ORIGIN=${origin.origin}`, `PUBLIC_HOST=${origin.hostname}`, `WEB_BIND_IP=${bindIp}`,
-    'WEB_PORT=8081', 'HTTPS_PORT=8443', `MONGO_DATA_DIR="${dataDirectory}"`, 'APP_TAG=0.1.1',
-    'DATABASE_ALLOWED_HOSTS=documentdb', 'DATABASE_ALLOW_PRIVATE=true', '',
+    'WEB_PORT=8081', 'HTTPS_PORT=8443', ...(!external ? [`MONGO_DATA_DIR="${dataDirectory}"`] : []), 'APP_TAG=0.1.2',
+    `DEPLOYMENT_MODE=${deploymentMode}`, `COMPOSE_FILE=${external ? 'compose.external.yaml' : 'compose.yaml'}`,
+    `DATABASE_ALLOWED_HOSTS=${allowedHosts}`, 'DATABASE_ALLOW_PRIVATE=true', '',
   ].join('\n'), { flag: 'wx', mode: 0o600 });
-  return { origin: origin.origin, email, tunnelConfigured: Boolean(token) };
+  return { origin: origin.origin, email, deploymentMode, tunnelConfigured: Boolean(token) };
 }
 
 function prompt(label, hidden = false) {
@@ -93,12 +100,16 @@ async function main() {
   if (password !== await prompt('Confirm owner password (hidden): ', true)) throw new Error('Passwords do not match');
   const name = (await prompt('Owner name [Administrator]: ')).trim() || 'Administrator';
   const organizationName = (await prompt('Organization name [DataCloud]: ')).trim() || 'DataCloud';
-  const existingMongo = (await prompt('Reuse the existing MongoDB data directory? [Y/n]: ')).trim().toLowerCase() !== 'n';
-  const mongoDataDirectory = (await prompt(existingMongo ? 'Existing MongoDB absolute path (Linux/macOS /path or Windows C:/path): ' : 'New MongoDB data directory [./data]: ')).trim() || (existingMongo ? '' : './data');
-  const mongoPassword = await prompt('Existing MongoDB password (hidden; blank generates one for a NEW database): ', true);
+  const modeAnswer = (await prompt('Manage external databases only, or include a local starter MongoDB? [E/l]: ')).trim().toLowerCase();
+  if (!['', 'e', 'l'].includes(modeAnswer)) throw new Error('Choose E for external databases or l for local MongoDB');
+  const deploymentMode = modeAnswer === 'l' ? 'local' : 'external';
+  const existingMongo = deploymentMode === 'local' && (await prompt('Reuse the existing MongoDB data directory? [y/N]: ')).trim().toLowerCase() === 'y';
+  const mongoDataDirectory = deploymentMode === 'local' ? (await prompt(existingMongo ? 'Existing MongoDB absolute path (Linux/macOS /path or Windows C:/path): ' : 'New MongoDB data directory [./data]: ')).trim() || (existingMongo ? '' : './data') : undefined;
+  const mongoPassword = existingMongo ? await prompt('Existing MongoDB password (hidden): ', true) : '';
+  const allowedHosts = deploymentMode === 'external' ? (await prompt('Approved database hostnames/IPs, comma separated (blank configures later): ')).trim() : 'documentdb';
   const tunnelToken = await prompt('Cloudflare tunnel token (hidden; blank keeps tunnel disabled): ', true);
   const bindAll = (await prompt('Publish local HTTPS port to NAS network? [y/N]: ')).trim().toLowerCase() === 'y';
-  const result = await configureNas(directory, { origin, email, password, name, organizationName, mongoDataDirectory, mongoPassword, existingMongo, tunnelToken, bindIp: bindAll ? '0.0.0.0' : '127.0.0.1' });
+  const result = await configureNas(directory, { origin, email, password, name, organizationName, deploymentMode, allowedHosts, mongoDataDirectory, mongoPassword, existingMongo, tunnelToken, bindIp: bindAll ? '0.0.0.0' : '127.0.0.1' });
   process.stdout.write(`Configuration ready for ${result.origin}; owner ${result.email}. Start with: sh deploy/nas/start.sh\n`);
 }
 

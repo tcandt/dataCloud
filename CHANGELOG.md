@@ -5,6 +5,43 @@
 Every published version has a matching Git tag, release notes and Docker tags.
 Version format: MAJOR.MINOR.PATCH. Preview versions may require migration review.
 
+## 0.1.2 - 2026-10-06
+
+### English
+
+- Added external-only installation: the website/API and metadata store start
+  together without a starter MongoDB. Default for new interactive setups.
+- Added private CA entry and rotation with encrypted, request-only storage.
+  Verified TLS remains required; legacy encrypted URI records remain readable.
+- Independently verify concurrent credential candidates, preserve working settings
+  on failed verification, and reject stale health/capability updates after rotation.
+- Prevent a slow database connection attempt from blocking other connection pools.
+- Corrected denied/unsupported capability evidence, BSON metric validation,
+  DocumentDB operation identifiers and driver timeout classification.
+- Aligned visible console branding with DataCloud and improved connection form layout.
+- Added opt-in compatibility checks with private fixture configuration and sanitized
+  reports. This does not certify a live upstream DocumentDB deployment.
+- No engine upgrade or metadata table migration. New connection secret envelopes
+  require 0.1.2; rollback after creating/rotating a connection requires restoring
+  the matching earlier metadata backup and vault keys.
+
+### Tiếng Việt
+
+- Thêm chế độ chỉ quản lý database có sẵn: website/API và kho metadata khởi động
+  cùng nhau, không kèm MongoDB khởi tạo. Mặc định khi cài mới qua trình cấu hình.
+- Thêm nhập và thay CA riêng, lưu mã hóa và không trả lại qua API đọc.
+  Vẫn bắt buộc TLS; đọc được thông tin URI mã hóa của phiên bản cũ.
+- Kiểm tra độc lập các lần đổi kết nối đồng thời; giữ cấu hình cũ nếu kiểm tra
+  thất bại và từ chối kết quả trạng thái cũ ghi đè sau khi đổi thông tin kết nối.
+- Một database kết nối chậm không còn chặn các kết nối khác.
+- Sửa nhận diện tính năng bị từ chối/chưa hỗ trợ, dữ liệu metric BSON, mã thao tác
+  DocumentDB và phân loại lỗi hết thời gian chờ.
+- Đồng bộ tên hiển thị DataCloud và cải thiện bố cục form kết nối.
+- Thêm bộ kiểm tra tương thích chỉ chạy khi được bật, dùng cấu hình riêng và báo
+  cáo đã lọc thông tin. Chưa chứng nhận triển khai DocumentDB upstream thực tế.
+- Không nâng cấp engine hoặc đổi bảng metadata. Sau khi tạo/thay kết nối bằng
+  0.1.2, muốn hạ phiên bản phải khôi phục backup metadata cũ cùng khóa vault.
+
 ## 0.1.1 - 2026-10-06
 
 ### English

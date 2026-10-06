@@ -30,7 +30,7 @@ database được mã hóa trong kho bí mật phía máy chủ, không trả v�
 DataCloud là lớp quản lý, không phải database engine mới hay bản fork của
 MongoDB hoặc dự án DocumentDB upstream.
 
-## Phạm vi bản 0.1.1
+## Phạm vi bản 0.1.2
 
 | Thành phần | Trạng thái |
 | --- | --- |
@@ -60,6 +60,13 @@ Clone repo hoặc giải nén ZIP từ Releases. Chạy trong thư mục vừa t
 Mặc định website là `https://localhost:8443`. Nhập origin HTTPS, email quản trị
 và mật khẩu của bạn khi cấu hình; không có email quản trị mặc định.
 Tài khoản quản trị đầu tiên không cần SMTP hay Google.
+
+Chọn **E (external)** để chỉ chạy DataCloud và quản lý các database bạn đã có.
+Đây là mặc định khi cấu hình mới qua màn hình nhập: website/API, PostgreSQL lưu
+metadata và nginx chạy cùng nhau, không tạo MongoDB mẫu. Nhập danh sách hostname/IP
+được phép rồi thêm URI và thông tin xác thực riêng trong Connections.
+Chọn **l (local)** nếu cần thêm MongoDB mẫu. Cấu hình hiện có giữ nguyên chế độ;
+biến `COMPOSE_FILE` trong `.env` riêng chọn bộ dịch vụ tương ứng.
 
 Linux, Ubuntu, macOS và NAS:
 
@@ -104,11 +111,22 @@ DATABASE_ALLOW_PRIVATE=true
 ```
 
 Container ứng dụng phải truy cập được hostname và tin cậy CA TLS của database.
+Nếu dùng CA riêng, mở **Private certificate authority** trong hộp thoại kết nối
+và dán chứng chỉ CA dạng PEM. Chứng chỉ được mã hóa cùng URI và không trả về qua
+API đọc. Khi đổi thông tin xác thực, mặc định giữ CA; bạn có thể chọn thay CA
+hoặc dùng kho tin cậy hệ thống. Endpoint chưa có TLS cần bật TLS trước khi kết nối.
 Trong mục Connections trên website, nhập URI riêng có xác thực,
 `tls=true` và `directConnection=true`. Dùng tài khoản database với quyền tối
 thiểu. Bản này chấp nhận một seed trực tiếp và xác thực default/SCRAM;
 chưa hỗ trợ SRV, nhiều seed hoặc tự khám phá topology. Kiểm tra endpoint thật
 trước khi sử dụng cho công việc thực tế.
+
+Để chuyển hệ thống hiện có sang chế độ external, sao lưu cấu hình/dữ liệu, đặt
+`COMPOSE_FILE=compose.external.yaml` và danh sách hostname được phép. Metadata
+kết nối cũ vẫn được giữ; xóa kết nối MongoDB mẫu trên website nếu không cần.
+Đổi file Compose không tự dừng MongoDB mẫu đang chạy. Khi phù hợp, dừng riêng
+service đó bằng file Compose local cũ và giữ nguyên dữ liệu. Chế độ external
+không tự thêm URI database bên ngoài lúc khởi tạo quản trị viên.
 
 ## Tên miền và thông tin riêng
 
@@ -126,7 +144,7 @@ trong Cloudflare. Truy cập origin đã cấu hình với đường dẫn `/log
 
 Đọc [CHANGELOG](CHANGELOG.md) và ghi chú phiên bản. Sao lưu dữ liệu MongoDB,
 PostgreSQL, secrets và volume chứng chỉ. Tải bộ cài mới, giữ `.env`, secrets,
-khóa vault và các volume hiện tại, đặt `APP_TAG=0.1.1`, rồi chạy script khởi động.
+khóa vault và các volume hiện tại, đặt `APP_TAG=0.1.2`, rồi chạy script khởi động.
 Không chạy `docker compose down -v` vì lệnh đó xóa volume dữ liệu.
 
 Releases có TAR image riêng cho AMD64/ARM64 và `SHA256SUMS.txt`. Chọn đúng
@@ -134,7 +152,9 @@ kiến trúc, dùng `docker load`, rồi đặt `DATACLOUD_NO_PULL=1` khi chạy
 Các image PostgreSQL, MongoDB, nginx và cloudflared tùy chọn vẫn cần có sẵn
 hoặc tải từ registry chính thức. Chi tiết nằm trong tài liệu tiếng Anh.
 
-Bản 0.1.1 không đổi schema metadata hay phiên bản engine. Bản 0.1.0 đã được
+0.1.2 không đổi bảng metadata hay phiên bản engine. Sau khi tạo/thay kết nối,
+bản cũ không đọc được định dạng mã hóa mới; hạ phiên bản cần khôi phục backup
+metadata trước cập nhật cùng khóa vault. Bản 0.1.0 đã được
 thu hồi để gỡ thông tin cấu hình riêng; không thể thu hồi bản đã tải hoặc
 bộ nhớ đệm của bên khác. Chính sách pháp lý vẫn là bản nháp; xác minh SMTP,
 Google và triển khai endpoint thực tế tiếp tục được hoãn theo yêu cầu.

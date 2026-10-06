@@ -14,6 +14,7 @@ jobs:
           node --input-type=module -e 'import { configureNas } from "./scripts/nas-configure.mjs"; await configureNas("deploy/nas", { origin:"https://localhost:8443", email:"owner@example.invalid", password:"Synthetic-validation-password-123", name:"Test", organizationName:"Test", mongoDataDirectory:"./data", existingMongo:false, tunnelToken:"" });'
           docker compose -f deploy/nas/compose.yaml --profile tunnel config --quiet
           docker compose -f deploy/nas/compose.yaml -f deploy/nas/compose.mongo-port.yaml config --quiet
+          docker compose -f deploy/nas/compose.external.yaml --profile tunnel config --quiet
           test ! -d apps
           test ! -d services
           test ! -f package-lock.json

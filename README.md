@@ -30,7 +30,7 @@ or the upstream DocumentDB project.
 
 ### Connectors in This Preview
 
-| Connector / component | Status in 0.1.1 |
+| Connector / component | Status in 0.1.2 |
 | --- | --- |
 | MongoDB adapter | Implemented; local MongoDB 4.4.29 TLS and synthetic CRUD verified |
 | DocumentDB adapter | Uses the MongoDB-compatible gateway; live upstream endpoint verification pending |
@@ -44,12 +44,12 @@ describes the intended workflow, not equivalent connector coverage or features.
 
 ## Version
 
-Current release: **0.1.1**. Each release has a Git tag, a versioned image,
+Current release: **0.1.2**. Each release has a Git tag, a versioned image,
 release notes and a [changelog](CHANGELOG.md). See [version.json](version.json).
 
 ```text
-ghcr.io/tcandt/datacloud:0.1.1
-ghcr.io/tcandt/datacloud-certificates:0.1.1
+ghcr.io/tcandt/datacloud:0.1.2
+ghcr.io/tcandt/datacloud-certificates:0.1.2
 ```
 
 Both images publish `linux/amd64` and `linux/arm64` under the same version tag.
@@ -80,6 +80,13 @@ Setup defaults to `https://localhost:8443`. Enter your own HTTPS website origin,
 administrator email and password during setup. There is no default administrator
 email. No SMTP or Google account is required for the first owner.
 
+Choose **E (external)** to run DataCloud against databases you already operate.
+This is the default for new interactive setups: website/API, metadata PostgreSQL
+and nginx run together, without a starter MongoDB. Enter the approved database
+hostnames/IPs during setup, then add credentials privately through Connections.
+Choose **l (local)** to include a starter MongoDB. Existing configurations retain
+their current mode. `COMPOSE_FILE` in the private `.env` selects the matching stack.
+
 Linux, Ubuntu, macOS and NAS:
 
 ```sh
@@ -97,7 +104,7 @@ docker run --rm -it --mount "type=bind,source=$($PWD.Path),target=/workspace" `
 powershell -ExecutionPolicy Bypass -File deploy/nas/start.ps1
 ```
 
-For a new database, answer `n` to reuse existing MongoDB data. To reuse existing
+In local mode, answer `n` to reuse existing MongoDB data for a new database. To reuse existing
 data, back it up, stop the old MongoDB container and enter its absolute host
 path and current password. Windows paths use forward slashes, e.g. `D:/mongo/data`.
 The stack uses MongoDB 4.4.29 to preserve the supplied database version. It is
@@ -109,7 +116,7 @@ files, especially vault keys. Keep the secrets directory restricted to your
 host account; Compose secrets are host files, not an encrypted secret store.
 On Windows, review directory permissions so other local accounts cannot read it.
 
-The stack starts the website/API, PostgreSQL metadata store, MongoDB and nginx.
+The local stack starts the website/API, PostgreSQL metadata store, MongoDB and nginx.
 Services restart with Docker unless explicitly stopped. Enable Docker startup
 at boot; Docker Desktop may start only after you sign in.
 
@@ -121,7 +128,7 @@ for each CPU architecture. Use the `linux-amd64` archive on Intel/AMD hosts or
 matching archive, then use your configured deployment directory:
 
 ```sh
-docker load -i datacloud-images-v0.1.1-linux-amd64.tar
+docker load -i datacloud-images-v0.1.2-linux-amd64.tar
 DATACLOUD_NO_PULL=1 sh deploy/nas/start.sh
 ```
 
@@ -169,12 +176,25 @@ DATABASE_ALLOW_PRIVATE=true
 ```
 
 Ensure the application container can reach the host and trusts its TLS CA.
+For a private CA, expand **Private certificate authority** in the connection
+dialog and paste only the PEM CA certificate bundle. It is encrypted alongside
+the URI and is never returned by read APIs. Credential rotation keeps the current
+CA by default; you can explicitly replace it or select system trust.
+Plaintext database endpoints must enable TLS before DataCloud can connect.
 Enter the URI privately in Connections with authentication, `tls=true` and
 `directConnection=true`. Use a least-privilege database account. This preview
 accepts one direct seed and default/SCRAM authentication; SRV, multiple seeds
 and topology discovery are unavailable. A hostname allowlist does not establish
 network reachability or prove endpoint compatibility. Validate the actual target
 before relying on it for operations.
+
+To select external mode on an existing installation, back up the private
+configuration and data, set `COMPOSE_FILE=compose.external.yaml`, and configure
+the approved hostnames. Existing starter connection records are preserved;
+remove those records in the website if no longer needed. Switching Compose
+files does not stop a previously running starter MongoDB automatically. Stop
+that service explicitly using the old local Compose file when appropriate;
+do not delete its data. No external database URI is bootstrapped automatically.
 
 ## Update and Recovery
 
@@ -185,6 +205,10 @@ target version and run the start script. It pulls and starts that exact version.
 Do not use `docker compose down -v`; it deletes persistent volumes.
 Automatic major database upgrades are not part of an application update.
 Database schema changes may prevent downgrades; follow the notes for each release.
+Version 0.1.2 writes a versioned encrypted connection envelope when creating or
+rotating connections. Old raw-URI records remain readable in 0.1.2. Versions
+0.1.1 and earlier cannot read new envelopes; do not downgrade after these changes
+without restoring the matching pre-upgrade metadata backup and vault keys.
 
 Legal content remains draft. SMTP/Google live verification is deferred.
 Public images contain executable code that can be inspected; private source

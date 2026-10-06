@@ -63,54 +63,6 @@ services:
       timeout: 5s
       retries: 12
       start_period: 30s
-  documentdb:
-    image: mongo:4.4.29
-    restart: unless-stopped
-    entrypoint:
-      - /bin/sh
-      - /deploy/start-mongo.sh
-    command:
-      - mongod
-      - --bind_ip_all
-      - --tlsMode
-      - requireTLS
-      - --tlsCertificateKeyFile
-      - /tmp/tls/server.pem
-      - --tlsCAFile
-      - /run/tls/ca.crt
-      - --tlsAllowConnectionsWithoutCertificates
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: docdbadmin
-      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_password
-    secrets:
-      - mongo_password
-    volumes:
-      - ${MONGO_DATA_DIR:-./data}:/data/db
-      - mongo_tls:/run/tls:ro
-      - ./start-mongo.sh:/deploy/start-mongo.sh:ro
-    tmpfs:
-      - /tmp:size=32m,nosuid
-    networks:
-      - database
-    depends_on:
-      certificates:
-        condition: service_completed_successfully
-    healthcheck:
-      test:
-        - CMD
-        - mongo
-        - --quiet
-        - --host
-        - documentdb
-        - --tls
-        - --tlsCAFile
-        - /run/tls/ca.crt
-        - --eval
-        - "quit(db.adminCommand({ping:1}).ok ? 0 : 1)"
-      interval: 15s
-      timeout: 10s
-      retries: 12
-      start_period: 45s
   app:
     image: ghcr.io/tcandt/datacloud:${APP_TAG:-0.1.2}
     user: 1000:1000
@@ -134,8 +86,7 @@ services:
       DATABASE_URL_FILE: /run/secrets/database_url
       VAULT_KEYS_FILE: /run/secrets/vault_keys
       ROOT_OWNER_CONFIG_FILE: /run/secrets/owner_config
-      ROOT_CONNECTION_URI_FILE: /run/secrets/mongo_uri
-      DATABASE_ALLOWED_HOSTS: ${DATABASE_ALLOWED_HOSTS:-documentdb}
+      DATABASE_ALLOWED_HOSTS: ${DATABASE_ALLOWED_HOSTS:-}
       DATABASE_ALLOW_PRIVATE: ${DATABASE_ALLOW_PRIVATE:-true}
       TRUSTED_PROXY_IPS: ${INGRESS_IP:-172.30.240.2}
       NODE_EXTRA_CA_CERTS: /run/tls/ca.pem
@@ -144,7 +95,6 @@ services:
       - database_url
       - vault_keys
       - owner_config
-      - mongo_uri
     volumes:
       - public_ca:/run/tls:ro
     networks:
@@ -153,8 +103,6 @@ services:
         ipv4_address: ${APP_PROXY_IP:-172.30.240.4}
     depends_on:
       postgres:
-        condition: service_healthy
-      documentdb:
         condition: service_healthy
     mem_limit: 1g
     cpus: 2
@@ -227,16 +175,12 @@ services:
 secrets:
   postgres_password:
     file: ./secrets/postgres_password
-  mongo_password:
-    file: ./secrets/mongo_password
   database_url:
     file: ./secrets/database_url
   vault_keys:
     file: ./secrets/vault_keys
   owner_config:
     file: ./secrets/owner_config
-  mongo_uri:
-    file: ./secrets/mongo_uri
   tunnel_token:
     file: ./secrets/tunnel_token
 volumes:

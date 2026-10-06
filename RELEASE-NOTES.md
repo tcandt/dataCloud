@@ -1,50 +1,57 @@
-# DataCloud 0.1.1
+# DataCloud 0.1.2
 
 ## English
 
-DataCloud is an independent third-party platform for managing connected databases
-through a website, in the same workflow category as DbGate. It is a management
-layer above existing database engines. There is no affiliation with DbGate.
+DataCloud is an independent third-party web platform for managing existing
+databases, in the same workflow category as DbGate, without affiliation.
+This preview connects MongoDB and the MongoDB-compatible DocumentDB gateway.
+PostgreSQL stores platform metadata; it is not yet a customer database connector.
 
-This update adds bilingual documentation, clarifies current connector coverage,
-removes operator-specific installation defaults and permits approved external
-database hostnames through a private configuration allowlist.
+New installations default to external-only mode: website/API, PostgreSQL metadata
+and nginx start together without a starter MongoDB. Choose local mode when a
+starter database is wanted. Existing installations retain their mode and data.
 
-MongoDB is implemented and locally tested. The DocumentDB adapter targets its
-MongoDB-compatible gateway; verification against a live upstream endpoint remains
-pending. PostgreSQL in the stack stores DataCloud metadata and is not an external
-database connector. Other engine integrations are future work.
+Connections now accept private CA certificates. URI and CA are encrypted together;
+read APIs never return them. Rotation verifies independent candidates, preserves
+working settings on failure and rejects stale observations after a credential
+change. TLS and hostname validation remain mandatory. Capability evidence,
+metrics and DocumentDB operation identifiers have also been corrected.
 
-Public Docker images support Linux AMD64 and ARM64 under the same version tag.
-The application remains proprietary; this repository publishes deployment files
-and documentation. See README.md and VERIFICATION.md for installation and limits.
+The console displays DataCloud consistently. Docker images share a version tag
+for Linux AMD64/ARM64; executable application code remains proprietary and source
+remains private. Public files contain only deployment materials and documentation.
 
-The initial public release was withdrawn and public history replaced to remove
-private operator information. Update existing installations by preserving their
-private `.env`, secrets, vault keys and data volumes, setting `APP_TAG=0.1.1`, and
-running the startup script. No metadata schema or database engine version changes.
-Existing downloads or third-party caches cannot be recalled.
+Update with your existing private settings, secrets and volumes; set
+`APP_TAG=0.1.2` and run the startup script. Back up metadata and vault keys first.
+There is no engine upgrade or table migration. New/rotated connection records use
+a secret envelope that older versions cannot read: rollback requires the matching
+pre-update metadata backup. See [verification](VERIFICATION.md) for tested scope.
+Legal drafts and SMTP/Google live validation remain deferred.
 
 ## Tiếng Việt
 
-DataCloud là nền tảng bên thứ ba độc lập để quản lý các database đã kết nối trên
-website, cùng nhóm cách sử dụng như DbGate. Đây là lớp quản lý phía trên database
-engine đang có. Dự án không có quan hệ liên kết với DbGate.
+DataCloud là nền tảng bên thứ ba độc lập để quản lý database có sẵn trên website,
+cùng nhóm cách sử dụng như DbGate và không có quan hệ liên kết với DbGate.
+Bản preview hỗ trợ adapter MongoDB và gateway tương thích MongoDB của DocumentDB.
+PostgreSQL lưu metadata nền tảng, chưa phải connector cho database khách hàng.
 
-Bản này thêm tài liệu Anh/Việt, làm rõ phạm vi connector, gỡ cấu hình mặc định riêng
-và cho phép thêm hostname database bên ngoài vào danh sách được phép trong cấu
-hình riêng của người vận hành.
+Cài mới mặc định dùng chế độ external: website/API, kho metadata PostgreSQL và
+nginx khởi động cùng nhau, không kèm MongoDB khởi tạo. Chọn local khi cần database
+khởi tạo. Cấu hình và dữ liệu của hệ thống đã cài được giữ lại.
 
-MongoDB đã triển khai và kiểm tra cục bộ. Adapter DocumentDB dùng gateway tương
-thích MongoDB, chưa xác minh trên endpoint upstream thật. PostgreSQL trong stack
-lưu metadata DataCloud, chưa phải connector cho database PostgreSQL bên ngoài.
-Các engine khác sẽ được tích hợp sau.
+Có thể nhập CA riêng khi tạo hoặc thay kết nối. URI và CA được lưu mã hóa; API
+đọc không trả lại chúng. Mỗi lần thay kết nối được kiểm tra riêng, giữ cấu hình
+cũ nếu thất bại và không cho kết quả kiểm tra cũ ghi đè sau khi đổi mật khẩu.
+TLS và kiểm tra tên máy chủ vẫn bắt buộc. Bản này cũng sửa nhận diện tính năng,
+metric và mã thao tác DocumentDB.
 
-Image Docker công khai hỗ trợ Linux AMD64/ARM64 cùng một tag phiên bản. Ứng dụng
-vẫn dùng giấy phép đóng; repo chỉ công khai bộ cài và hướng dẫn. Xem README.vi.md
-và VERIFICATION.md để biết cách cài và giới hạn đã kiểm tra.
+Giao diện thống nhất tên DataCloud. Image Docker dùng cùng tag cho Linux
+AMD64/ARM64; ứng dụng giữ giấy phép đóng và mã nguồn riêng tư. Repo công khai chỉ
+chứa bộ triển khai và tài liệu.
 
-Bản công khai ban đầu đã thu hồi; lịch sử công khai được thay để gỡ thông tin
-riêng. Khi cập nhật, giữ `.env`, secrets, khóa vault và volume dữ liệu, đặt
-`APP_TAG=0.1.1` rồi chạy script khởi động. Không đổi schema metadata hay phiên bản
-database engine. Không thể thu hồi các bản đã tải hoặc cache của bên khác.
+Khi nâng cấp, giữ cấu hình riêng, secrets, volume và đặt `APP_TAG=0.1.2` rồi chạy
+script khởi động. Sao lưu metadata và khóa vault trước. Không nâng engine hoặc
+đổi bảng metadata. Kết nối tạo/thay ở bản này dùng định dạng mã hóa mới mà bản cũ
+không đọc được; hạ phiên bản cần khôi phục backup metadata trước cập nhật.
+Xem [kết quả kiểm tra](VERIFICATION.md) để biết phạm vi thực tế. Pháp lý vẫn là
+bản nháp; xác minh SMTP/Google trực tiếp tiếp tục được hoãn.
