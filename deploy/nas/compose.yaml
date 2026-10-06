@@ -1,0 +1,255 @@
+name: datumline-nas
+services:
+  certificates:
+    restart: no
+    network_mode: none
+    read_only: true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:size=16m,noexec,nosuid
+    environment:
+      PUBLIC_HOST: ${PUBLIC_HOST:-localhost}
+    volumes:
+      - certificate_authority:/authority
+      - postgres_tls:/postgres
+      - mongo_tls:/mongo
+      - public_ca:/public-ca
+      - ingress_tls:/ingress
+    image: ghcr.io/tcandt/datacloud-certificates:${APP_TAG:-0.1.1}
+  postgres:
+    image: postgres:17-bookworm
+    restart: unless-stopped
+    entrypoint:
+      - /bin/sh
+      - /deploy/start-postgres.sh
+    command:
+      - postgres
+      - -c
+      - ssl=on
+      - -c
+      - ssl_cert_file=/run/tls/server.crt
+      - -c
+      - ssl_key_file=/tmp/tls/server.key
+      - -c
+      - password_encryption=scram-sha-256
+    environment:
+      POSTGRES_DB: control_plane
+      POSTGRES_USER: control_plane
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    secrets:
+      - postgres_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_tls:/run/tls:ro
+      - ./start-postgres.sh:/deploy/start-postgres.sh:ro
+    tmpfs:
+      - /tmp:size=32m,nosuid
+    networks:
+      - database
+    depends_on:
+      certificates:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U control_plane -d control_plane
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+  documentdb:
+    image: mongo:4.4.29
+    restart: unless-stopped
+    entrypoint:
+      - /bin/sh
+      - /deploy/start-mongo.sh
+    command:
+      - mongod
+      - --bind_ip_all
+      - --tlsMode
+      - requireTLS
+      - --tlsCertificateKeyFile
+      - /tmp/tls/server.pem
+      - --tlsCAFile
+      - /run/tls/ca.crt
+      - --tlsAllowConnectionsWithoutCertificates
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: docdbadmin
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_password
+    secrets:
+      - mongo_password
+    volumes:
+      - ${MONGO_DATA_DIR:-./data}:/data/db
+      - mongo_tls:/run/tls:ro
+      - ./start-mongo.sh:/deploy/start-mongo.sh:ro
+    tmpfs:
+      - /tmp:size=32m,nosuid
+    networks:
+      - database
+    depends_on:
+      certificates:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD
+        - mongo
+        - --quiet
+        - --host
+        - documentdb
+        - --tls
+        - --tlsCAFile
+        - /run/tls/ca.crt
+        - --eval
+        - "quit(db.adminCommand({ping:1}).ok ? 0 : 1)"
+      interval: 15s
+      timeout: 10s
+      retries: 12
+      start_period: 45s
+  app:
+    image: ghcr.io/tcandt/datacloud:${APP_TAG:-0.1.1}
+    user: 1000:1000
+    read_only: true
+    init: true
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:size=64m,noexec,nosuid
+    expose:
+      - "4317"
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "4317"
+      DEMO_MODE: "false"
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:?Set the exact HTTPS website origin}
+      DATABASE_URL_FILE: /run/secrets/database_url
+      VAULT_KEYS_FILE: /run/secrets/vault_keys
+      ROOT_OWNER_CONFIG_FILE: /run/secrets/owner_config
+      ROOT_CONNECTION_URI_FILE: /run/secrets/mongo_uri
+      DATABASE_ALLOWED_HOSTS: ${DATABASE_ALLOWED_HOSTS:-documentdb}
+      DATABASE_ALLOW_PRIVATE: ${DATABASE_ALLOW_PRIVATE:-true}
+      TRUSTED_PROXY_IPS: ${INGRESS_IP:-172.30.240.2}
+      NODE_EXTRA_CA_CERTS: /run/tls/ca.pem
+      LEGAL_MONITOR_ENABLED: "false"
+    secrets:
+      - database_url
+      - vault_keys
+      - owner_config
+      - mongo_uri
+    volumes:
+      - public_ca:/run/tls:ro
+    networks:
+      database: {}
+      proxy:
+        ipv4_address: ${APP_PROXY_IP:-172.30.240.4}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      documentdb:
+        condition: service_healthy
+    mem_limit: 1g
+    cpus: 2
+  ingress:
+    image: nginx:1.28.0-alpine
+    user: 101:101
+    read_only: true
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:size=16m,noexec,nosuid
+    entrypoint:
+      - /bin/sh
+      - -ec
+    command:
+      - envsubst '$${TUNNEL_IP}' < /deploy/nginx.conf > /tmp/nginx.conf; exec
+        nginx -c /tmp/nginx.conf -g 'daemon off;'
+    environment:
+      TUNNEL_IP: ${TUNNEL_IP:-172.30.240.3}
+    ports:
+      - 127.0.0.1:${WEB_PORT:-8081}:8080
+      - ${WEB_BIND_IP:-127.0.0.1}:${HTTPS_PORT:-8443}:8443
+    volumes:
+      - ./nginx.conf:/deploy/nginx.conf:ro
+      - ingress_tls:/run/tls:ro
+    networks:
+      proxy:
+        ipv4_address: ${INGRESS_IP:-172.30.240.2}
+    depends_on:
+      app:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - -q
+        - -O
+        - /dev/null
+        - http://127.0.0.1:8080/api/v1/health
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  cloudflared:
+    image: cloudflare/cloudflared:2026.10.0
+    profiles:
+      - tunnel
+    restart: unless-stopped
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    command:
+      - tunnel
+      - --no-autoupdate
+      - run
+    environment:
+      TUNNEL_TOKEN_FILE: /run/secrets/tunnel_token
+    secrets:
+      - tunnel_token
+    networks:
+      proxy:
+        ipv4_address: ${TUNNEL_IP:-172.30.240.3}
+    depends_on:
+      ingress:
+        condition: service_healthy
+secrets:
+  postgres_password:
+    file: ./secrets/postgres_password
+  mongo_password:
+    file: ./secrets/mongo_password
+  database_url:
+    file: ./secrets/database_url
+  vault_keys:
+    file: ./secrets/vault_keys
+  owner_config:
+    file: ./secrets/owner_config
+  mongo_uri:
+    file: ./secrets/mongo_uri
+  tunnel_token:
+    file: ./secrets/tunnel_token
+volumes:
+  certificate_authority: null
+  postgres_tls: null
+  mongo_tls: null
+  public_ca: null
+  ingress_tls: null
+  postgres_data: null
+networks:
+  database:
+    internal: true
+  proxy:
+    ipam:
+      config:
+        - subnet: ${PROXY_SUBNET:-172.30.240.0/28}

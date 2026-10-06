@@ -1,0 +1,15 @@
+DataCloud application and runtime images
+Copyright (c) 2026 tcandt. All rights reserved.
+
+Permission is granted to run the supplied official DataCloud images on your
+own infrastructure, including personal and commercial internal use.
+No license to publish, redistribute or sublicense the proprietary application
+source code is granted. The DataCloud application is not open source.
+
+The publicly distributed Docker deployment files have their own MIT license.
+Third-party software retains its original licenses and rights. The image
+contains THIRD-PARTY-NOTICES.txt and installed dependency license files.
+
+The software is provided "AS IS", without warranty of any kind.
+Encryption of source backups and minification of runtime code do not guarantee
+that distributed executable code cannot be inspected or reconstructed.

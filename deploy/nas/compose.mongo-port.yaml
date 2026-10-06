@@ -1,0 +1,4 @@
+# Optional local access only. Keep all authentication and TLS settings enabled.
+services:
+  documentdb:
+    ports: ['127.0.0.1:10260:27017']

@@ -1,0 +1,9 @@
+.env
+**/.env
+**/secrets/
+**/data/
+*.key
+*.db
+*.log
+*.tar
+*.zip
