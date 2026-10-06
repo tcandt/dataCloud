@@ -5,6 +5,11 @@
 Every published version has a matching Git tag, release notes and Docker tags.
 Version format: MAJOR.MINOR.PATCH. Preview versions may require migration review.
 
+## 0.1.6 — 2026-10-06
+
+- English: capability-aware operations observations render unsupported without HTTP errors, stop automatic refetches and support manual recovery. Preserve real failures and legacy API behavior.
+- Tiếng Việt: hiển thị đúng lệnh không hỗ trợ, dừng gọi lại tự động và cho làm mới thủ công. Giữ lỗi thật và tương thích API cũ. Chủ nền tảng đã duyệt; xem VERIFICATION.md về triển khai.
+
 ## 0.1.5 — 2026-10-06
 
 ### English

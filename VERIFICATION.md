@@ -1,23 +1,18 @@
-# DataCloud 0.1.5 verification / Kiểm tra bản 0.1.5
+# 0.1.6 verification / Kết quả kiểm tra
 
-2026-10-06. Human review approved. Versioned public images and native NAS AMD64 deployment verified. / Đã được duyệt; đã phát hành image và kiểm tra triển khai NAS AMD64.
+2026-10-06. Human release/deployment review approved. Docker images published; hosted upgrade pending operator DSM authentication. Current hosted image remains 0.1.5.
 
-| Check / Kiểm tra | Evidence / Bằng chứng |
-| --- | --- |
-| Source gates | 273 tests passed, typecheck, web build and compiled runtime passed. Release workflow succeeded. |
-| Admin authorization | Platform Owner only; demo, ordinary tenant and API-key denial, CSRF, version conflicts, audit rollback and replay tested locally. |
-| Worker | Eight focused tests cover expiry, encrypted opt-in reminders, duplicate workers/restart, rollback, validation and bounded recipient continuation. No real reminder email sent. |
-| PostgreSQL | Six independent processes/pools: quota, catalog, checkout, webhook, settlement and lifecycle races plus reminder deduplication. Synthetic local fixture. |
-| Full restore | 44 tables / 46 rows matched after actual fixture database drop and archive restoration. Vault/AAD, audit, ledger and three encrypted email jobs recovered. Not a NAS restore or HA/RPO/RTO claim. |
-| Customer UI | Synthetic local Owner granted Pro with expiry. Actual 320/417/800/1600 CSS px, no page overflow. Keyboard dialog focus wrap tested. Live NAS Owner directory and customer detail views verified with two existing organizations. No customer subscription was changed during deployment checks. |
-| Images | Anonymous registry manifest checks passed for application and certificate initializer, AMD64 and ARM64. Published app startup, Google-only enforcement, dynamic SOCKS, compiled egress and certificate generation passed on native AMD64 and emulated ARM64. See image-digests.json. |
-| Privacy | Both published app filesystems scanned: 17,611 / 17,610 files. Public deployment export uses an explicit allowlist and private-identifier checks. Source archive encrypted and restored byte-for-byte; decryption key stays private. |
-| NAS | Native AMD64 runtime reports 0.1.5. App, PostgreSQL and ingress healthy; tunnel HTTPS health reports live/PostgreSQL. Existing mounts and private configuration preserved. Pre-upgrade custom PostgreSQL backup catalog readable (201 lines); no NAS restore drill performed. |
-| Google and MongoDB | Fresh Google-only sign-in restored the platform Owner. Existing MongoDB Explorer returned synthetic orders, 50-row page limit. The existing TLS bridge has a plaintext backend hop on the same NAS; this is not end-to-end database TLS. |
-| Atlas | Read-only operator probe using the deployed 0.1.5 connector against the previously reported connection returned UNSUPPORTED_CAPABILITY for its tier-restricted currentOp command. Regression tests preserve unrelated errors. The customer's own browser session was not available for a live UI retest. |
-| Cloudflare/CSP | Public HTTPS HTML returns no-cache, no-transform and strict script-src self. No Cloudflare Insights beacon in the delivered HTML. |
-| Payment isolation | Post-upgrade read-only checks: both subscriptions remain Free/active; zero invoices and zero email jobs. Existing SePay Test Mode ledger contains only synthetic records. Renewal reminders remain disabled. |
+- 276/276 source tests passed; typecheck, web build and compiled runtime passed.
+- API regression covers supported-empty versus unsupported, legacy422 compatibility, anonymous/foreign-resource denial, unknown view validation, sanitized response and preserved403/503/504 failures.
+- QueryObserver regression covers unsupported mount/focus/reconnect suppression, connection isolation, manual recovery, resumed polling and real failure propagation without retries.
+- Local browser using a synthetic tier restriction renders Current operations unavailable in Overview and Operations, with no console errors/warnings. After switching the fixture to supported, manual Refresh displays No current operations returned.
+- Published application and certificate images are anonymously accessible for linux/amd64 and linux/arm64. Runtime checks passed on native AMD64 and emulated ARM64: Google-only enforcement, dynamic SOCKS dependency, compiled egress module and operations capability report. Certificate initialization passed on both architectures. Native ARM64/macOS acceptance is not claimed.
+- Extracted application image privacy scans passed on both architectures. Exact registry digests are recorded in image-digests.json. The application image was built from private release source bf730c9795caece86fbea83453e109b7ac47276d.
+- A fresh pre-upgrade PostgreSQL archive has a readable catalog; this is not a restore drill. DSM project stop failed and its container inventory includes a stale tunnel entry. Existing application services were restarted on 0.1.5, and public health returned HTTP 200 with live PostgreSQL storage. A disabled manual maintenance task is prepared but awaits DSM password confirmation. No successful hosted 0.1.6 deployment or live Atlas 0.1.6 acceptance is claimed.
+- The legacy operations endpoint without `view=capability` intentionally retains its 422 unsupported response. The new web console uses the optional capability report. Actual database permission, transport and timeout failures remain errors.
 
-Earlier evidence: a real SePay **Test Mode** provider callback passed in 0.1.4; one SMTP inbox delivery passed in 0.1.3. They are not new 0.1.5 payment/reminder delivery tests. No live money, recurring debit, unrestricted Google onboarding, upstream DocumentDB acceptance, native ARM64/macOS hardware, NAS disaster recovery or scale capacity is claimed.
+Tiếng Việt: đạt 276/276 bài kiểm thử và các bước build/runtime. Image công khai có AMD64 và ARM64; đã chạy thử AMD64 trực tiếp, ARM64 giả lập, đăng nhập Google-only, SOCKS, báo cáo capability và tạo chứng chỉ. Đã quét dữ liệu riêng tư trong cả hai image. Chưa xác nhận chạy trực tiếp trên NAS ARM64 hoặc macOS.
 
-Tiếng Việt: Bản 0.1.5 đã chạy trên NAS và có Customers cho chủ nền tảng. Đã kiểm tra đăng nhập Google mới, đọc MongoDB, phân loại hạn chế Atlas và phản hồi Cloudflare. Gói khách hàng/dữ liệu được giữ nguyên; thanh toán vẫn là Test Mode và email nhắc hạn vẫn tắt. Kiểm thử quyền khách thường và thay đổi gói dùng fixture cục bộ; chưa đăng nhập lại tài khoản khách thường trên NAS. Bằng chứng ARM64 là giả lập, khôi phục dữ liệu là fixture, không phải diễn tập phục hồi NAS.
+Đã kiểm tra luồng không hỗ trợ và phục hồi bằng fixture cục bộ, không phát sinh thanh toán hoặc thay đổi database khách hàng. Đã sao lưu PostgreSQL trước nâng cấp và đọc được danh mục bản sao lưu; chưa diễn tập khôi phục NAS. Container Manager có mục tunnel cũ không thể thao tác, và dừng dự án thất bại. Website đã chạy lại bản 0.1.5 và kiểm tra sức khỏe trả HTTP 200. Tác vụ bảo trì thủ công đang chờ xác thực mật khẩu DSM; bản 0.1.6 chưa được xác nhận triển khai trên NAS. Endpoint cũ vẫn giữ HTTP 422 khi lệnh không hỗ trợ; giao diện mới dùng `view=capability`.
+
+Payment remains a synthetic test integration. This patch does not activate live billing or renewal email delivery. Broader roadmap work is not declared complete.

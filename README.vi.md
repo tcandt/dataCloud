@@ -32,10 +32,9 @@ database được mã hóa trong kho bí mật phía máy chủ, không trả v�
 DataCloud là lớp quản lý, không phải database engine mới hay bản fork của
 MongoDB hoặc dự án DocumentDB upstream.
 
-## Phạm vi bản 0.1.5
+## Phạm vi bản 0.1.6
 
-Bản preview 0.1.5 bổ sung quản trị khách hàng/gói, tự xử lý hết hạn,
-nhắc hạn tùy chọn và sửa lỗi Atlas/CSP. Xem [hướng dẫn quản trị](docs/operations/CUSTOMER-SUBSCRIPTIONS.md). Xem [kết quả kiểm tra](VERIFICATION.md) về image và triển khai.
+Bản preview 0.1.6 sửa lỗi HTTP khi Atlas không hỗ trợ theo dõi operations, dừng tự thử lại và cho phép làm mới thủ công. Giữ các tính năng quản trị khách hàng/gói và xử lý hết hạn đã có. Xem [hướng dẫn quản trị](docs/operations/CUSTOMER-SUBSCRIPTIONS.md). Xem [kết quả kiểm tra](VERIFICATION.md) về image và triển khai.
 NAS AMD64, đăng nhập Google mới, MongoDB chỉ đọc và SePay Test Mode thực tế đã
 đạt ở 0.1.4. Bằng chứng SMTP vẫn thuộc bản 0.1.3.
 
@@ -196,10 +195,10 @@ trong Cloudflare. Truy cập origin đã cấu hình với đường dẫn `/log
 
 Đọc [CHANGELOG](CHANGELOG.md) và ghi chú phiên bản. Sao lưu dữ liệu MongoDB,
 PostgreSQL, secrets và volume chứng chỉ. Tải bộ cài mới, giữ `.env`, secrets,
-khóa vault và các volume hiện tại, đặt `APP_TAG=0.1.5`, rồi chạy script khởi động.
+khóa vault và các volume hiện tại, đặt `APP_TAG=0.1.6`, rồi chạy script khởi động.
 Không chạy `docker compose down -v` vì lệnh đó xóa volume dữ liệu.
 
-Bản 0.1.5 cung cấp ZIP triển khai, digest image và `SHA256SUMS.txt`.
+Bản 0.1.6 cung cấp ZIP triển khai, digest image và `SHA256SUMS.txt`.
 Docker tải image công khai từ GHCR và tự chọn AMD64/ARM64, không cần đăng nhập.
 Bản này không đính kèm TAR ngoại tuyến; archive của bản trước chỉ dùng cho đúng
 phiên bản đó.

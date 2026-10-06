@@ -20,7 +20,7 @@ services:
       - mongo_tls:/mongo
       - public_ca:/public-ca
       - ingress_tls:/ingress
-    image: ghcr.io/tcandt/datacloud-certificates:${APP_TAG:-0.1.5}
+    image: ghcr.io/tcandt/datacloud-certificates:${APP_TAG:-0.1.6}
   postgres:
     image: postgres:17-bookworm
     restart: unless-stopped
@@ -64,7 +64,7 @@ services:
       retries: 12
       start_period: 30s
   app:
-    image: ghcr.io/tcandt/datacloud:${APP_TAG:-0.1.5}
+    image: ghcr.io/tcandt/datacloud:${APP_TAG:-0.1.6}
     user: 1000:1000
     read_only: true
     init: true
