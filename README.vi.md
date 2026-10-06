@@ -33,7 +33,8 @@ MongoDB hoặc dự án DocumentDB upstream.
 ## Phạm vi bản 0.1.3
 
 Bản preview 0.1.3 đã có image công khai và đã chạy HTTPS trên NAS Synology AMD64.
-Callback Google và gửi SMTP thật vẫn chờ hoàn tất. Xem
+Đã kiểm tra callback/phiên/đăng xuất Google và thư SMTP gửi từ NAS đã đến Gmail.
+Chưa xác minh mọi luồng thông báo. Xem
 [kết quả kiểm tra](VERIFICATION.md) trước khi triển khai.
 
 | Thành phần | Trạng thái |

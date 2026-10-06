@@ -1,9 +1,10 @@
 # DataCloud 0.1.3
 
 **Preview status:** public AMD64/ARM64 images are available; native Synology
-deployment and HTTPS tunnel startup passed. Google consent/callback and SMTP
-delivery still require operator completion. See the
-[verification receipt](https://github.com/tcandt/dataCloud/blob/v0.1.3/VERIFICATION.md).
+deployment and HTTPS tunnel startup passed. Follow-up verification also passed
+live Google sign-in/session/logout and one SMTP test from the NAS delivered to
+Gmail. This does not establish every notification workflow. See the
+[verification receipt with operational follow-ups](https://github.com/tcandt/dataCloud/blob/main/VERIFICATION.md).
 
 ## English
 
@@ -34,8 +35,9 @@ on the checked views; this does not establish coverage of every device or route.
 
 Local checks passed: **226 tests**, type checking and application builds.
 Published images passed runtime checks on AMD64 and emulated ARM64. Native
-Synology AMD64 startup and HTTPS access passed; Google callback and actual SMTP
-delivery remain unverified. Intended Docker targets are Linux AMD64/ARM64.
+Synology AMD64 startup and HTTPS access passed. Follow-up live Google callback,
+session/logout and a NAS SMTP test delivered to Gmail passed. Intended Docker
+targets are Linux AMD64/ARM64.
 Executable application code remains proprietary and source remains private.
 
 Update with your existing private settings, secrets and volumes; set
@@ -81,7 +83,8 @@ truy vấn di động thu gọn mà giữ nội dung projection/sort. Kiểm tra
 
 Đã đạt **226 bài kiểm tra**, kiểm tra kiểu dữ liệu và build cục bộ. Image công khai
 đạt kiểm tra AMD64 và ARM64 giả lập. NAS Synology AMD64 đã khởi động và truy cập
-HTTPS thành công; callback Google và gửi SMTP thật chưa xác minh. Docker hướng
+HTTPS thành công; kiểm tra bổ sung đạt callback/phiên/đăng xuất Google và một thư
+SMTP từ NAS đã đến Gmail. Docker hướng
 tới Linux AMD64/ARM64. Ứng dụng giữ giấy phép đóng và mã
 nguồn riêng tư; repo công khai chỉ chứa bộ triển khai và tài liệu.
 

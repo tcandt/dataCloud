@@ -45,7 +45,8 @@ describes the intended workflow, not equivalent connector coverage or features.
 ## Version
 
 Current preview: **0.1.3**. Public images and native Synology HTTPS startup are
-verified; Google callback and SMTP delivery remain pending. See
+verified. Live Google sign-in/session/logout and a NAS SMTP test delivered to the
+operator's Gmail inbox also passed; see
 [verification](VERIFICATION.md). Each published release has a Git tag, a versioned image,
 release notes and a [changelog](CHANGELOG.md). See [version.json](version.json).
 
@@ -257,9 +258,9 @@ rollback requires reviewing authentication settings and restoring a matching
 metadata/secrets backup, not merely changing the image tag. Preserve the current
 backup and end active sessions before a rollback.
 
-Legal content remains draft. Native Synology startup and HTTPS access passed;
-Google callback and SMTP delivery await operator/provider completion. Current
-evidence is in VERIFICATION.md.
+Legal content remains draft. Native Synology startup, HTTPS access, live Google
+sign-in/session/logout and one SMTP test from the NAS delivered to Gmail passed.
+This does not verify every notification workflow. Current evidence is in VERIFICATION.md.
 Public images contain executable code that can be inspected; private source
 storage and encrypted backups do not make distributed code impossible to recover.
 

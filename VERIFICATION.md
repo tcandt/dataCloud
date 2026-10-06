@@ -27,8 +27,8 @@ asset checksums. Historical receipts below are not evidence for these images.
 | Responsive browser review | Checked 320, 375, 767 and 1440 CSS-pixel widths; no page horizontal overflow on checked views; collapsed query options preserved projection/sort drafts |
 | Final AMD64/ARM64 images and archives | Anonymous manifests verified for both images; AMD64 and emulated ARM64 runtime smoke passed; metadata/decompressed-layer privacy scan passed over 52 extracted files |
 | Native NAS deployment and public testing tunnel | Synology DS920+ AMD64 / DSM 7.3.1: fresh certificate initialization, PostgreSQL health, application startup, ingress, healthy tunnel and public HTTPS landing/login passed |
-| Live Google callback/session/logout | OAuth reaches the correct account consent screen; operator consent, callback/session/logout remain unverified |
-| SMTP provider and delivered message | Disabled; operator Google identity verification and SMTP credential setup remain required |
+| Live Google callback/session/logout | Verified Google identity linked to the existing Owner workspace; reload preserved the session; logout denied protected-page access; subsequent sign-in and session persistence across container restart passed |
+| SMTP provider and delivered message | Private mounted Gmail app credential; configured website status passed; one self-addressed test through the application's SMTP transport inside the NAS container was accepted (1 recipient, 0 rejected) and confirmed in the Gmail inbox |
 | Encrypted private source backup | Authenticated restore matched source archive hash; decryption key remains private |
 
 Google-only implementation tests cover blocked password/demo/recovery paths,
@@ -41,9 +41,22 @@ refuses bootstrap, so changing a config file is not an owner migration procedure
 Đã đạt 226 bài kiểm tra và kiểm tra kiểu dữ liệu cục bộ; build ứng dụng đạt.
 Giao diện đã thử ở các chiều rộng nêu trên, không thấy tràn ngang toàn trang trên
 các trang đã kiểm tra. Image cuối đạt kiểm tra AMD64 và ARM64 giả lập; NAS Synology
-AMD64, tunnel và HTTPS thật đã hoạt động. Google tới màn hình đồng ý, chưa xác
-minh callback/phiên/đăng xuất; SMTP vẫn tắt. Bằng chứng 0.1.2 dưới đây chỉ là lịch
+AMD64, tunnel và HTTPS thật đã hoạt động. Google đã đạt callback, quyền Owner,
+duy trì phiên và đăng xuất. Một thư thử qua SMTP của container NAS đã đến hộp thư
+Gmail. Bằng chứng 0.1.2 dưới đây chỉ là lịch
 sử. Thay email owner trong file không tự chuyển quyền tài khoản.
+
+Follow-up operational evidence was added after the original 0.1.3 release assets.
+The executable images, release tag and ZIP checksums are unchanged; archived
+receipts inside the original ZIP describe the publication-time state. The SMTP
+check used the existing application's transport directly. It does not establish
+end-to-end invitation, billing, alert or scheduled-report delivery, nor automatic
+generation of those notifications.
+
+Bằng chứng vận hành bổ sung không thay đổi image, tag hoặc checksum ZIP 0.1.3.
+Tài liệu trong ZIP gốc ghi trạng thái tại thời điểm công bố. Thư thử dùng transport
+của ứng dụng trực tiếp; chưa kiểm tra toàn bộ luồng lời mời, thanh toán, cảnh báo,
+báo cáo hoặc việc tự động sinh các thông báo đó.
 
 ## Historical 0.1.2 release checks / Kiểm tra bản trước
 
@@ -136,9 +149,10 @@ Không thể thu hồi các bản đã tải hoặc bộ nhớ đệm của bên
   macOS/Ubuntu hardware and real DocumentDB gateway remain unverified. Không coi
   ARM64 giả lập là kiểm tra NAS ARM64 thật.
 - PostgreSQL is the metadata store, not an external PostgreSQL connector.
-- Legal policies remain `DRAFT_AI`. Google and SMTP are now authorized for setup;
-  their live verification remains incomplete. OAuth configuration and browser
-  account login do not establish SMTP readiness or delivered mail.
+- Legal policies remain `DRAFT_AI`. Google callback/session/logout and one NAS
+  SMTP delivery were verified on the operator installation. Google OAuth remains
+  in testing mode with explicitly configured test users; this is not production
+  OAuth publication or evidence for other operators' provider accounts.
 - Public images contain inspectable executable code under a proprietary license.
 - The retired release, public Git history and old image versions are withdrawn
   from active distribution. Already downloaded copies and third-party caches
