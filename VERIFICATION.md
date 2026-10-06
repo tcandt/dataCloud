@@ -5,7 +5,25 @@ Date / Ngày: 2026-10-06.
 This receipt distinguishes checks of this release from earlier runtime evidence.
 Connector availability is documented in [English](README.md) and
 [Vietnamese](README.vi.md). It does not establish compatibility with every engine
-or Docker host. Final publication results are recorded below after release gates.
+or Docker host.
+
+## 0.1.1 Release Gates
+
+| Check | Result |
+| --- | --- |
+| Source snapshot | Private tag `v0.1.1`, revision `c42b0ed` |
+| Unit, integration and security suite | 193 passed locally and in the private image workflow |
+| TypeScript, client build and compiled runtime smoke | Passed |
+| Public Compose validation, including optional tunnel/port overlays | Passed locally and in public repository CI |
+| Public deployment ZIP contents and compiled app privacy scan | Passed; operator identifier values were not logged |
+| Public Git history | Replaced with deployment/docs only; commits use a GitHub noreply address |
+| Published image manifests | Anonymous access passed; both application and certificate images contain AMD64/ARM64 |
+| Retired 0.1.0 manifests | Anonymous access fails for old tags, index digests and both architecture digests |
+| Docker archive layers, both architectures | Private identifier scan passed after decompressing layers |
+| Official AMD64 runtime | HTTPS login, PostgreSQL metadata, MongoDB TLS and synthetic CRUD passed |
+| Official ARM64 runtime under AMD64 emulation | Same production smoke passed; process architecture confirmed as arm64 |
+| Official ARM64 certificate initializer | Fresh certificates with default localhost hostname generated and verified |
+| Encrypted private source backup | AES-256-GCM authenticated restore matches original ZIP hash; key retained locally |
 
 ## Earlier Runtime Evidence (0.1.0)
 
